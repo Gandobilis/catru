@@ -1,8 +1,12 @@
 <script setup>
 import Hr from "../components/Hr.vue";
 import useUser from "../composables/useUser.js";
+import useLeg from "../composables/useLeg.js";
+
+const {company, tax, loadingLeg, error, getCompany, clientName, tax_number, legPearson, legPearsonTax} = useLeg();
 
 const {
+  disabled,
   formType,
   clientType,
   notification,
@@ -19,8 +23,19 @@ const {
   _selectFormType,
   getUser
 } = useUser()
-</script>
 
+const prt = () => {
+  window.print()
+}
+</script>
+<style>
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}
+</style>
 <template>
   <div class="flex flex-col p-3 border-2 border-black rounded-xl max-w-2xl">
 
@@ -60,13 +75,23 @@ const {
     <Hr/>
 
     <div class="flex flex-col gap-2 pt-5 pb-2">
-      <h2 class="font-medium">კლიენტის ნომერი / პირადი ნომერი</h2>
-      <div class="flex gap-5">
+      <h2 v-if="clientType==='LEG'" class="font-medium">კლიენტის ნომერი / საიდენტიფიკაციო ნომერი</h2>
+      <h2 v-if="clientType==='IND'" class="font-medium">კლიენტის ნომერი / პირადი ნომერი</h2>
+      <div v-if="clientType==='IND'" class="flex gap-5">
         <input type="number"
                v-model="personalNumber"
                placeholder="XXXXXXX..."
                class="text-lg input input-bordered font-medium border-black focus:outline-none focus:border-black w-2/3"/>
         <button class="btn btn-neutral w-1/3 text-white" @click="getUser" v-if="!loading">შემოწმება</button>
+        <button v-else class="btn btn-neutral w-1/3 text-white"><span class="loading loading-spinner loading-sm"></span>
+        </button>
+      </div>
+      <div v-if="clientType==='LEG'" class="flex gap-5">
+        <input type="number"
+               v-model="tax"
+               placeholder="XXXXXXX..."
+               class="text-lg input input-bordered font-medium border-black focus:outline-none focus:border-black w-2/3"/>
+        <button class="btn btn-neutral w-1/3 text-white" @click="getCompany" v-if="!loadingLeg">შემოწმება</button>
         <button v-else class="btn btn-neutral w-1/3 text-white"><span class="loading loading-spinner loading-sm"></span>
         </button>
       </div>
@@ -76,7 +101,7 @@ const {
     <div class="flex flex-col">
       <h2 class="font-medium text-xl mb-3">კლიენტის მონაცემები
       </h2>
-      <div class="flex gap-5 pb-2">
+      <div v-if="clientType==='IND'" class="flex gap-5 pb-2">
         <div class="flex flex-col gap-2 w-1/2">
           <h2 class="font-medium">კლიენტის სახელი, გვარი</h2>
           <input disabled
@@ -101,6 +126,65 @@ const {
                  type="number">
         </div>
       </div>
+      <!--      იურიდიული პირი-->
+      <div v-if="clientType==='LEG'" class="flex flex-col gap-5 pb-2">
+        <!-- First Row -->
+        <div class="flex gap-5 w-full">
+          <div class="flex flex-col gap-2 w-1/2">
+            <h2 class="font-medium">კლიენტის დასახელება</h2>
+            <input disabled
+                   :value="company?.clientName"
+                   class="disabled:text-gray-900 input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="text" v-if="!editable">
+            <input v-else
+                   v-model="clientName"
+                   class="input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="text">
+          </div>
+
+          <div class="flex flex-col gap-2 w-1/2">
+            <h2 class="font-medium">საიდენტიფიკაციო ნომერი</h2>
+            <input disabled
+                   :value="company?.tax_number"
+                   class="disabled:text-gray-900 input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="number" v-if="!editable">
+            <input v-else
+                   v-model="tax_number"
+                   class="input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="number">
+          </div>
+        </div>
+
+        <!-- Second Row -->
+        <div class="flex gap-5 w-full">
+          <div class="flex flex-col gap-2 w-1/2">
+            <h2 class="font-medium">უფლებამოსილი პირი (უფ.პ)</h2>
+            <input disabled
+                   :value="company?.legPearson"
+                   class="disabled:text-gray-900 input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="text" v-if="!editable">
+            <input v-else
+                   v-model="legPearson"
+                   class="input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="text">
+          </div>
+
+          <div class="flex flex-col gap-2 w-1/2">
+            <h2 class="font-medium">უფ.პ პირადი ნომერი</h2>
+            <input disabled
+                   :value="company?.legPearsonTax"
+                   class="disabled:text-gray-900 input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="number" v-if="!editable">
+            <input v-else
+                   v-model="legPearsonTax"
+                   class="input input-bordered font-medium border-black focus:outline-none focus:border-black w-full"
+                   type="number">
+          </div>
+        </div>
+      </div>
+
+      <!--      იურიდიული პირი-->
+
     </div>
     <Hr/>
 
@@ -144,8 +228,11 @@ const {
     </div>
     <Hr/>
     <div class="flex justify-between">
+
       <button class="btn btn-neutral w-1/3 text-white"
-              :disabled="((!isNameSurnameValid || !isPersonalNumberValid) && editable) || !user">ბეჭდვა
+              :disabled="disabled()"
+              @click="prt"
+      >ბეჭდვა
       </button>
       <button class="btn btn-error w-1/3  text-white" onclick="window.close()">გაუქმება</button>
     </div>

@@ -8,7 +8,9 @@ export default function useUser() {
     const isNameSurnameValid = ref(false)
     const _personalNumber = ref()
     const isPersonalNumberValid = ref(false)
-
+    const disabled = () => {
+        return (!isNameSurnameValid.value || !isPersonalNumberValid.value) && !user.value
+    }
 
     const formType = ref('MT');
     const clientType = ref('IND');
@@ -50,7 +52,7 @@ export default function useUser() {
 
         if (personalNumber.value) {
             try {
-                const response = await fetch(`http://localhost:3001/users?personal_number=${personalNumber.value}`);
+                const response = await fetch(`http://localhost:3000/users?personal_number=${personalNumber.value}`);
                 const data = await response.json();
 
                 if (data.length > 0) {
@@ -69,6 +71,7 @@ export default function useUser() {
                     }
                 } else {
                     notification.value = 'აღნიშნული ნომრით კლიენტი არ მოიძებნა.'
+                    editable.value = true;
                 }
             } catch (error) {
                 console.error('Error fetching user:', error);
@@ -82,6 +85,7 @@ export default function useUser() {
     };
 
     return {
+        disabled,
         formType,
         clientType,
         notification,
