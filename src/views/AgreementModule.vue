@@ -40,14 +40,14 @@ const prt = () => {
 }
 </style>
 <template>
-  <div class="flex flex-col p-5 pt-0 shadow-2xl rounded-2xl container  min-w-max">
+  <div class="flex flex-col p-5 pt-0 shadow-2xl rounded-2xl xl:w-[60vw] w-screen   ">
 
     <h1 class="text-2xl  py-4 text-[#1C5285]  font-bold text-center">თანხმობის მოდული</h1>
 
     <Hr/>
 
 
-    <div class="flex flex-col gap-[22px] py-[22px]">
+    <div class="flex flex-col gap-[22px]   py-[22px]">
       <h2 class="text-xl font-bpg font-semibold">თანხმობის ფორმა</h2>
 
       <form class="flex gap-6 font-medium justify-between items-center">
@@ -105,9 +105,9 @@ const prt = () => {
     </div>
     <Hr/>
 
-    <div class="flex flex-col gap-[10px] py-[22px]">
-      <div v-if="clientType==='IND'" class="flex gap-5 pb-2">
-        <div class="flex flex-col gap-2 w-1/2">
+    <div class="flex flex-col gap-[20px] py-[22px]">
+      <div v-if="clientType==='IND'" class="flex xs  justify-between gap-5 pb-2">
+        <div :class="['flex flex-col gap-2', formType==='MT'?'w-1/2':'w-[30%]' ]">
           <h2 class="text-lg font-medium">კლიენტის სახელი, გვარი</h2>
           <input disabled
                  :value="user?.nameSurname"
@@ -120,7 +120,7 @@ const prt = () => {
         </div>
 
 
-        <div class="flex flex-col gap-2 w-1/2">
+        <div :class="['flex flex-col gap-2', formType==='MT'?'w-1/2':'w-[30%]' ]">
           <h2 class="text-lg font-medium">პირადი ნომერი</h2>
           <input disabled
                  :value="user?.personalNumber"
@@ -135,7 +135,7 @@ const prt = () => {
         </div>
 
 
-        <div v-if="formType==='EL'" class="flex flex-col gap-2 w-1/2">
+        <div v-if="formType==='EL'" class="flex flex-col gap-2 w-[30%]">
           <h2 class="text-lg font-medium">მობილური (SMS)</h2>
           <input disabled
                  :value="user?.phone_number"
@@ -255,7 +255,7 @@ const prt = () => {
     <div class="flex flex-col gap-[22px] py-[22px]">
       <h2 class="text-xl font-bpg font-semibold">აირჩიეთ თანხმობის ფორმა</h2>
 
-      <form v-if="clientType==='IND'" class="flex  justify-between font-medium items-center">
+      <form v-if="clientType==='IND'" class="flex gap-16 justify-between font-medium items-center">
         <div class="flex gap-1  items-center">
           <input type="radio" name="CB-RS" value="CB-REC" v-model="selectFormType" checked class=" radio-xs"/>
           <p>საკრე. ბიურო მიღება</p>
