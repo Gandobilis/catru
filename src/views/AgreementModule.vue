@@ -40,7 +40,7 @@ const prt = () => {
 }
 </style>
 <template>
-  <div class="flex flex-col p-5 pt-0 shadow-2xl rounded-2xl  w-[40vw]">
+  <div class="flex flex-col p-5 pt-0 shadow-2xl rounded-2xl container  min-w-max">
 
     <h1 class="text-2xl  py-4 text-[#1C5285]  font-bold text-center">თანხმობის მოდული</h1>
 
