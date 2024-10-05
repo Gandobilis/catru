@@ -1,52 +1,88 @@
-import {ref, watch} from "vue";
+import { ref, watch } from "vue";
+import useNotification from './useNotification';
+import {fa} from "@faker-js/faker"; // Import shared notification and editable state
 
 export default function useUser() {
+    const { notification, setNotification, editable, setEditable, formType  } = useNotification(); // Access shared state
+
     const user = ref();
     const loading = ref(false);
-    const editable = ref(false)
-    const nameSurname = ref()
-    const isNameSurnameValid = ref(false)
-    const _personalNumber = ref()
-    const isPersonalNumberValid = ref(false)
-    const disabled = () => {
-        return (!isNameSurnameValid.value || !isPersonalNumberValid.value) && !user.value
-    }
-
-    const formType = ref('MT');
+    const nameSurname = ref();
+    const isNameSurnameValid = ref(false);
+    const _personalNumber = ref();
+    const _phone_number = ref()
+    const isPersonalNumberValid = ref(false);
+    const isPhoneNumberValid = ref(false)
     const clientType = ref('IND');
+    function disabled() {
+        if ((!isNameSurnameValid.value || !isPersonalNumberValid.value) && !user.value) {
+            return true;
+        } else if ((formType.value === 'EL' && !isPhoneNumberValid.value) && !user.value)  {
+            return true;
+        } else {
+            return false;
+        }
+    }
     const personalNumber = ref();
-    const notification = ref();
-    const formLang = ref('GE')
-    const selectFormType = ref('CB-REC')
+    const formLang = ref('GE');
+    const selectFormType = ref('CB-REC');
+    const selectFormTypeLeg = ref('CB-REC');
     const selectFormTypes = {
         'CB-REC': [
-            '- თანხმობა მონაცემების დამუშავების თაობაზე (30 დღე)',
-            '- თანხმობა მონაცემების დამუშავების თაობაზე (გზავნილები) (30 დღე)'
+            '• თანხმობა მონაცემების დამუშავების თაობაზე (30 დღე)',
+            '• თანხმობა მონაცემების დამუშავების თაობაზე (გზავნილები) (30 დღე)'
         ],
-        'CB-SEN': ['- თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ'],
-        'RS-REC': ['- თანხმობის ფორმა შემოსავლების სამსახურიდან ინფორმაციის გამოთხოვის შესახებ']
-    }
-    const _selectFormType = ref(selectFormTypes[selectFormType.value])
+        'CB-SEN': ['• თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ'],
+        'RS-REC': ['• თანხმობის ფორმა შემოსავლების სამსახურიდან ინფორმაციის გამოთხოვის შესახებ']
+    };
+    const selectFormTypesLeg = {
+        'CB-REC': [
+            '• თანხმობა მონაცემების დამუშავების თაობაზე (60 დღე)',
+            '• თანხმობა მონაცემების დამუშავების თაობაზე (გზავნილები) (30 დღე)'
+        ],
+        'CB-SEN': ['• თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ']
+    };
+    const _selectFormType = ref(selectFormTypes[selectFormType.value]);
+    const _selectFormTypeLeg = ref(selectFormTypesLeg[selectFormTypeLeg.value]);
+
 
     watch(selectFormType, (value) => {
         _selectFormType.value = selectFormTypes[value];
-    })
+    });
 
+    watch(selectFormTypeLeg, (value) => {
+        _selectFormTypeLeg.value = selectFormTypesLeg[value];
+    });
     watch(nameSurname, (value) => {
-        isNameSurnameValid.value = (value && value.length > 0)
-    })
+        isNameSurnameValid.value = (value && value.length > 0);
+    });
 
     watch(_personalNumber, (value) => {
-        isPersonalNumberValid.value = (value && value.toString().length === 11)
-    })
+        isPersonalNumberValid.value = (value && value.toString().length === 11);
+    });
+
+    watch(_phone_number, (value) => {
+        isPhoneNumberValid.value = (value && value.toString().length === 9);
+    });
+
+    const clearFields = () =>{
+        user.value = null
+    }
+    const sendSms = async () => {
+        setNotification("თანხმობის ფორმა წარმატებით გაიგზავნა")
+        clearFields()
+    }
+
+
 
     const getUser = async () => {
         loading.value = true;
-        notification.value = undefined;
-        editable.value = false;
+        setNotification(undefined);
+        setEditable(false);
         nameSurname.value = undefined;
         _personalNumber.value = undefined;
         isNameSurnameValid.value = false;
+        isPhoneNumberValid.value = false;
         isPersonalNumberValid.value = false;
         user.value = undefined;
 
@@ -56,22 +92,24 @@ export default function useUser() {
                 const data = await response.json();
 
                 if (data.length > 0) {
+
                     const _user = data[0];
                     if (_user.status === 'გაუქმებული') {
-                        notification.value = 'აღნიშნული ნომრით კლიენტი გაუქმებულია.'
-                        editable.value = true;
+                        setNotification('აღნიშნული ნომრით კლიენტი გაუქმებულია.');
+                        setEditable(true);
                     } else if (_user.status === 'დახურული') {
-                        notification.value = 'აღნიშნული ნომრით კლიენტი დახურულია.'
-                        editable.value = true;
+                        setNotification('აღნიშნული ნომრით კლიენტი დახურულია.');
+                        setEditable(true);
                     } else {
                         user.value = {
                             nameSurname: `${_user.name} ${_user.surname}`,
                             personalNumber: _user.personal_number,
+                            phone_number: _user.phone_number,
                         };
                     }
                 } else {
-                    notification.value = 'აღნიშნული ნომრით კლიენტი არ მოიძებნა.'
-                    editable.value = true;
+                    setNotification('აღნიშნული ნომრით კლიენტი არ მოიძებნა.');
+                    setEditable(true);
                 }
             } catch (error) {
                 console.error('Error fetching user:', error);
@@ -80,7 +118,7 @@ export default function useUser() {
             }
         } else {
             loading.value = false;
-            notification.value = 'გთხოვთ შეავსოთ კლიენტის/პირადი ნომრის ველი'
+            setNotification('გთხოვთ შეავსოთ კლიენტის/პირადი ნომრის ველი');
         }
     };
 
@@ -100,6 +138,10 @@ export default function useUser() {
         isPersonalNumberValid,
         selectFormType,
         _selectFormType,
+        _selectFormTypeLeg,
+        selectFormTypeLeg,
+        _phone_number,
+        sendSms,
         getUser
     };
 }

@@ -20,7 +20,8 @@ const users = Array.from({ length: 500_000 }, () => ({
     personal_number: generateUniqueNumber(),
     name: faker.person.firstName(),
     surname: faker.person.lastName(),
-    status: faker.helpers.arrayElement(['მოქმედი', 'უარყოფილი', 'გამოყენებული', 'ვადაგასული', 'გაუქმებული', 'დახურული'])
+    status: faker.helpers.arrayElement(['მოქმედი', 'უარყოფილი', 'გამოყენებული', 'ვადაგასული', 'გაუქმებული', 'დახურული']),
+    phone_number: faker.phone.number()
 }));
 
 // Generating companies with unique tax numbers and legal person tax numbers
@@ -29,10 +30,11 @@ const companies = Array.from({ length: 500_000 }, () => ({
     tax_number: generateUniqueNumber(),
     legPearson: faker.person.firstName() + " " + faker.person.firstName(),
     legPearsonTax: generateUniqueNumber(),
-    status: faker.helpers.arrayElement(['მოქმედი', 'უარყოფილი', 'გამოყენებული', 'ვადაგასული', 'გაუქმებული', 'დახურული'])
+    status: faker.helpers.arrayElement(['მოქმედი', 'უარყოფილი', 'გამოყენებული', 'ვადაგასული', 'გაუქმებული', 'დახურული']),
+    phone_number: faker.phone.number()
 }));
 
-const sandro = {personal_number: 38001046165, name: "სანდრო", surname: 'ღუღუნიშვილი', status: "მოქმედი"}
+const sandro = {personal_number: 38001046165, name: "სანდრო", surname: 'ღუღუნიშვილი', status: "მოქმედი", phone_number: 598414141}
 users.unshift(sandro)
 const data = { users, companies };
 

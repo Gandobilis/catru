@@ -23,15 +23,33 @@
     font-style: normal;
 }
 
+
+
 @font-face {
     font-family: 'FiraGO';
     src: url('/src/assets/fonts/FiraGO-Bold.woff2') format('woff2');
     font-weight: 700;
     font-style: normal;
 }
+@font-face {
+    font-family: 'nino';
+    src: url('src/assets/fonts/bpg_nino_mtavruli_normal.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'bpg';
+    src: url('src/assets/fonts/bpg_mrgvlovani_2010.ttf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+}
 
 * {
     font-family: 'FiraGO', serif;
+}
+input[type='radio'] {
+    accent-color: #1C5285 !important;
 }
 
 input::-webkit-outer-spin-button,

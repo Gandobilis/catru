@@ -1,3 +1,3 @@
 <template>
-  <div class="bg-black h-[2px] w-full my-2"/>
+  <div class="w-full border border-[#D0D5DD]"></div>
 </template>

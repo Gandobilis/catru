@@ -5,7 +5,12 @@ export default {
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        nino: ['nino', 'sans-serif'],  // Adding your custom font 'Nino'
+        bpg: ['bpg', 'sans-serif'],
+      },
+    },
   },
   plugins: [
     require('daisyui'),
