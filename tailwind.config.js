@@ -18,8 +18,9 @@ export default {
             'secondary-button-default': '#ED1C24',
             'secondary-button-hover': '#BF161D',
             'placeholder-grey': '#98A2B3',
-            'custom-green': '#117554'
-        }
+            'custom-green': '#117554',
+            'white': '#FFFFFF',
+        },
     },
     plugins: [
         require('daisyui'),

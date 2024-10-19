@@ -1,3 +1,3 @@
 <template>
-  <div class="w-full border border-[#D0D5DD]"></div>
+  <div class="w-full border border-stroke-grey"></div>
 </template>

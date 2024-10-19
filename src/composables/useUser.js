@@ -17,11 +17,7 @@ export default function useUser() {
     function disabled() {
         if ((!isNameSurnameValid.value || !isPersonalNumberValid.value) && !user.value) {
             return true;
-        } else if ((formType.value === 'EL' && !isPhoneNumberValid.value) && !user.value)  {
-            return true;
-        } else {
-            return false;
-        }
+        } else return (formType.value === 'EL' && !isPhoneNumberValid.value) && !user.value;
     }
     const personalNumber = ref();
     const formLang = ref('GE');
@@ -102,6 +98,8 @@ export default function useUser() {
                         setEditable(true);
                     } else {
                         user.value = {
+                            name: _user.name,
+                            surname: _user.surname,
                             nameSurname: `${_user.name} ${_user.surname}`,
                             personalNumber: _user.personal_number,
                             phone_number: _user.phone_number,
@@ -118,7 +116,7 @@ export default function useUser() {
             }
         } else {
             loading.value = false;
-            setNotification('გთხოვთ შეავსოთ კლიენტის/პირადი ნომრის ველი');
+            setNotification('ეს ველი სავალდებულოა');
         }
     };
 
