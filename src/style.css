@@ -3,51 +3,23 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-Regular.woff2') format('woff2');
-    font-weight: 400;
+    font-family: 'mtavruli';
+    src: url('src/assets/fonts/bpg_nino_mtavruli_bold.ttf') format('opentype');
+    font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-Medium.woff2') format('woff2');
-    font-weight: 500;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-SemiBold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-}
-
-
-
-@font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-Bold.woff2') format('woff2');
-    font-weight: 700;
-    font-style: normal;
-}
-@font-face {
-    font-family: 'nino';
-    src: url('src/assets/fonts/bpg_nino_mtavruli_normal.otf') format('opentype');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'bpg';
+    font-family: 'mrgvlovani';
     src: url('src/assets/fonts/bpg_mrgvlovani_2010.ttf') format('opentype');
     font-weight: normal;
     font-style: normal;
 }
 
 * {
-    font-family: 'FiraGO', serif;
+    font-family: 'mrgvlovani', sans-serif;
 }
+
 input[type='radio'] {
     accent-color: #1C5285 !important;
 }
