@@ -1,6 +1,5 @@
 import { ref, watch } from "vue";
 import useNotification from './useNotification';
-import {fa} from "@faker-js/faker"; // Import shared notification and editable state
 
 export default function useUser() {
     const { notification, setNotification, editable, setEditable, formType  } = useNotification(); // Access shared state

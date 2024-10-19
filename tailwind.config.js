@@ -20,6 +20,7 @@ export default {
             'placeholder-grey': '#98A2B3',
             'custom-green': '#117554',
             'white': '#FFFFFF',
+            'disabled': '#EAEAEA'
         },
     },
     plugins: [
