@@ -222,7 +222,7 @@ const {
                    class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text"
                    :maxlength="9"
-                   @input="_newUser.taxNumber = _newUser.taxNumber?.toString().slice(0, 9)">
+                   @input="_newUser.phoneNumber = _newUser.phoneNumber?.toString().slice(0, 9)">
           </div>
 
 
@@ -320,8 +320,8 @@ const {
         >
           <button
               class="send-print-button"
-              :disabled="!user"
-              @click="disabledLeg"
+              :disabled="disabledLeg"
+              @click="handleClick"
               v-text="'გაგზავნა'"
           />
         </router-link>

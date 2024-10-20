@@ -115,10 +115,19 @@ export default function useUser() {
     })
 
     const disabled = computed(() => {
-
+        if (formType.value === 'MT') {
+            return (!newUser.value.name || !newUser.value.surname || !newUser.value.personalNumber) && !user.value
+        } else {
+            return (!newUser.value.name || !newUser.value.surname || !newUser.value.personalNumber || !newUser.value.phoneNumber) && !user.value
+        }
     })
-    const disabledLeg = computed(() => {
 
+    const disabledLeg = computed(() => {
+        if (formType.value === 'MT') {
+            return (!_newUser.value.clientName || !_newUser.value.taxNumber || !_newUser.value.legPerson || !_newUser.value.legPersonTax) && !user.value
+        } else {
+            return (!_newUser.value.clientName || !_newUser.value.taxNumber || !_newUser.value.legPerson || !_newUser.value.legPersonTax || !_newUser.value.phoneNumber) && !user.value
+        }
     })
 
     const formLang = ref('GE');
