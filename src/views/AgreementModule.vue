@@ -1,38 +1,26 @@
 <script setup>
 import useUser from "../composables/useUser.js";
-import useLeg from "../composables/useLeg.js";
-import useNotification from "../composables/useNotification.js";
 import {computed} from "vue";
 
 const {
-  company,
-  tax,
-  loadingLeg,
-  getCompany,
-  clientName,
-  tax_number,
-  legPearson,
-  legPearsonTax,
-  disabledLeg,
-  legPersonPhone
-} = useLeg();
-const {notification, editable, formType} = useNotification()
-const {
-  disabled,
+  formType,
   clientType,
-  personalNumber,
+  personalOrTaxNumber,
+
+
   formLang,
   user,
-  _phone_number,
   loading,
-  nameSurname,
-  _personalNumber,
   selectFormType,
   _selectFormType,
   _selectFormTypeLeg,
   selectFormTypeLeg,
   getUser,
-  sendSms
+  sendSms,
+
+  newUser,
+  _newUser,
+  notification, editable
 } = useUser()
 
 const prt = () => {
@@ -51,46 +39,20 @@ const handleClick = () => {
   }
 };
 
-const identifier = computed({
-  get() {
-    return clientType.value === 'IND' ? personalNumber.value : tax.value
-  },
-  set(value) {
-    if (clientType.value === 'IND') {
-      personalNumber.value = value
-    } else {
-      tax.value = value
-    }
-  }
-})
-
-const placeholderText = computed(() => {
-  return clientType.value === 'IND' ? 'შეიყვანეთ იდენტიფიკატორი' : 'შეიყვანეთ საგადასახადო კოდი'
-})
-
-const isLoading = computed(() => {
-  return clientType.value === 'IND' ? loading.value : loadingLeg.value
-})
-
-const checkClient = () => {
-  if (clientType.value === 'IND') {
-    getUser()
-  } else {
-    getCompany()
-  }
-}
+const disabled = () => true
+const disabledLeg = () => true
 </script>
 
 <template>
-  <div class="flex flex-col rounded-lg border p-4 shadow-xl w-[600px] border-stroke-grey">
-    <p class="pb-3 text-center text-primary-blue font-mtavruli">თანხმობის მოდული</p>
+  <div class="flex flex-col rounded-lg border shadow-xl p-3.5 w-[600px] border-stroke-grey">
+    <p class="text-center pb-2.5 text-primary-blue font-mtavruli">თანხმობის მოდული</p>
 
     <hr class="text-placeholder-grey"/>
 
     <div class="flex flex-col gap-y-3.5 py-3.5">
       <p class="text-sm">თანხმობის ფორმა</p>
 
-      <form class="flex items-center justify-between font-medium">
+      <div class="flex items-center justify-between">
         <div class="flex items-center gap-x-1">
           <input type="radio" name="MT-EL" value="MT" checked v-model="formType"/>
 
@@ -102,7 +64,7 @@ const checkClient = () => {
 
           <p class="whitespace-nowrap text-xs">თანხმობის ელექტრონული ფორმა</p>
         </div>
-      </form>
+      </div>
     </div>
 
     <hr class="text-placeholder-grey"/>
@@ -110,7 +72,7 @@ const checkClient = () => {
     <div class="flex flex-col gap-y-3.5 py-3.5">
       <p class="text-sm">კლიენტის ტიპი</p>
 
-      <form class="flex items-center gap-[181px]">
+      <div class="flex items-center gap-x-[183px]">
         <div class="flex items-center gap-x-1">
           <input type="radio" name="IND-LEG" value="IND" v-model="clientType" checked/>
 
@@ -122,28 +84,26 @@ const checkClient = () => {
 
           <p class="text-xs">იურიდიული პირი</p>
         </div>
-      </form>
+      </div>
     </div>
 
     <hr class="text-placeholder-grey"/>
 
     <div class="flex flex-col gap-y-1.5 py-3.5">
-      <p v-if="clientType==='LEG'" class="text-sm">კლიენტის ნომერი / საიდენტიფიკაციო ნომერი</p>
-
-      <p v-else-if="clientType==='IND'" class="text-sm">კლიენტის ნომერი / პირადი ნომერი</p>
+      <p class="text-sm">კლიენტის ნომერი / {{ clientType === 'IND' ? 'პირადი ნომერი' : 'საიდენტიფიკაციო ნომერი' }}</p>
 
       <div class="flex gap-x-3.5">
         <input
-            v-model="identifier"
-            :placeholder="placeholderText"
+            v-model="personalOrTaxNumber"
+            placeholder="შეიყვანეთ იდენტიფიკატორი"
             :class="{'border-secondary-button-default': notification}"
             class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey w-[75%] focus:outline-none"/>
 
         <button
             class="rounded-md pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli hover:bg-primary-button-hover hover:transition disabled:text-placeholder-grey disabled:bg-stroke-grey disabled:cursor-not-allowed"
-            @click="checkClient"
-            :disabled="!identifier"
-            v-if="!isLoading">შემოწმება
+            @click="getUser"
+            :disabled="!personalOrTaxNumber"
+            v-if="!loading">შემოწმება
         </button>
 
         <button v-else class="rounded-lg pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli">
@@ -164,7 +124,7 @@ const checkClient = () => {
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
           <input v-else
-                 v-model="nameSurname"
+                 v-model="newUser.name"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
                  type="text">
         </div>
@@ -176,7 +136,7 @@ const checkClient = () => {
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
           <input v-else
-                 v-model="nameSurname"
+                 v-model="newUser.surname"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
                  type="text">
         </div>
@@ -188,11 +148,11 @@ const checkClient = () => {
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="number" v-if="!editable">
           <input v-else
-                 v-model="_personalNumber"
+                 v-model="newUser.personalNumber"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
                  type="number"
                  :maxlength="9"
-                 @input="_personalNumber = _personalNumber?.toString().slice(0, 11)">
+                 @input="newUser.personalNumber = newUser.personalNumber?.toString().slice(0, 11)">
         </div>
 
 
@@ -203,11 +163,11 @@ const checkClient = () => {
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
           <input v-else
-                 v-model="_phone_number"
+                 v-model="newUser.phoneNumber"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
                  type="number"
                  :maxlength="9"
-                 @input="_phone_number = _phone_number?.toString().slice(0, 9)">
+                 @input="newUser.phoneNumber = newUser.phoneNumber?.toString().slice(0, 9)">
         </div>
       </div>
 
@@ -219,27 +179,27 @@ const checkClient = () => {
           <div class="flex w-1/2 flex-col gap-2">
             <h2 class="text-sm font-medium">კლიენტის დასახელება</h2>
             <input disabled
-                   :value="company?.clientName"
+                   :value="user?.clientName"
                    class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text" v-if="!editable">
             <input v-else
-                   v-model="clientName"
-                   class="rounded-md border border-placeholder-grey p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                   v-model="_newUser.clientName"
+                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text">
           </div>
 
           <div class="flex w-1/2 flex-col gap-2">
             <h2 class="text-sm font-medium">საიდენტიფიკაციო ნომერი</h2>
             <input disabled
-                   :value="company?.tax_number"
+                   :value="user?.tax_number"
                    class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="number" v-if="!editable">
             <input v-else
-                   v-model="tax_number"
-                   class="rounded-md border border-placeholder-grey p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                   v-model="_newUser.taxNumber"
+                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="number"
                    :maxlength="9"
-                   @input="tax_number = tax_number?.toString().slice(0, 9)">
+                   @input="_newUser.taxNumber = _newUser.taxNumber?.toString().slice(0, 9)">
           </div>
         </div>
 
@@ -248,24 +208,24 @@ const checkClient = () => {
           <div class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფლებამოსილი პირი (უფ.პ)</h2>
             <input
-                :value="company?.legPearson"
-                class="rounded-md p-2 text-xs border border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                :value="user?.legPerson"
+                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                 type="text" v-if="!editable">
             <input v-else
-                   v-model="legPearson"
-                   class="rounded-md border border-placeholder-grey p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                   v-model="_newUser.legPerson"
+                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text">
           </div>
 
           <div class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფ.პ-ს პირადი ნომერი</h2>
             <input
-                :value="company?.legPearsonTax"
-                class="rounded-md p-2 text-xs border border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                :value="user?.legPersonTax"
+                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                 type="text" v-if="!editable">
             <input v-else
-                   v-model="legPearsonTax"
-                   class="rounded-md border border-placeholder-grey p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                   v-model="_newUser.legPersonTax"
+                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text">
 
           </div>
@@ -273,15 +233,15 @@ const checkClient = () => {
           <div v-if="formType==='EL'" class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფ.პ-ს მობილური</h2>
             <input
-                :value="company?.phone_number"
-                class="rounded-md p-2 text-xs border border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                :value="user?.phoneNumber"
+                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                 type="text" v-if="!editable">
             <input v-else
-                   v-model="legPersonPhone"
-                   class="rounded-md  border border-placeholder-grey p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                   v-model="_newUser.phoneNumber"
+                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text"
                    :maxlength="9"
-                   @input="tax_number = tax_number?.toString().slice(0, 9)">
+                   @input="_newUser.taxNumber = _newUser.taxNumber?.toString().slice(0, 9)">
           </div>
 
 
@@ -342,12 +302,14 @@ const checkClient = () => {
 
 
     </div>
+
     <hr class="text-placeholder-grey"/>
-    <div class="flex flex-col py-4 gap-3.5">
+
+    <div class="flex flex-col py-4 gap-3.5 h-[78px]">
       <span v-if="clientType==='IND'" class="text-xs font-medium" v-for="(type, index) in _selectFormType" :key="index"
             v-text="type"/>
-      <span v-if="clientType==='LEG'" class="text-xs font-medium" v-for="(type, index) in _selectFormTypeLeg"
-            :key="index"
+      <span v-else class="text-xs font-medium" v-for="(type, index) in _selectFormTypeLeg"
+            :key="index * 5"
             v-text="type"/>
 
     </div>
