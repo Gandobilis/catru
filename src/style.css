@@ -3,35 +3,27 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-Regular.woff2') format('woff2');
-    font-weight: 400;
+    font-family: 'mtavruli';
+    src: url('/src/assets/fonts/bpg_nino_mtavruli_bold.otf') format('opentype');
+    font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-Medium.woff2') format('woff2');
-    font-weight: 500;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-SemiBold.woff2') format('woff2');
-    font-weight: 600;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'FiraGO';
-    src: url('/src/assets/fonts/FiraGO-Bold.woff2') format('woff2');
-    font-weight: 700;
+    font-family: 'mrgvlovani';
+    src: url('/src/assets/fonts/bpg_mrgvlovani_2010.ttf') format('truetype');
+    font-weight: normal;
     font-style: normal;
 }
 
 * {
-    font-family: 'FiraGO', serif;
+    font-family: 'mrgvlovani', sans-serif;
+}
+
+
+input[type='radio'] {
+    @apply accent-primary-blue
+    size-3.5
 }
 
 input::-webkit-outer-spin-button,
