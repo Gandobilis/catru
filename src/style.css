@@ -4,14 +4,14 @@
 
 @font-face {
     font-family: 'mtavruli';
-    src: url('fonts/bpg_nino_mtavruli_bold.otf') format('opentype');
+    src: url('/src/assets/fonts/bpg_nino_mtavruli_bold.otf') format('opentype');
     font-weight: bold;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'mrgvlovani';
-    src: url('fonts/bpg_mrgvlovani_2010.ttf') format('truetype');
+    src: url('/src/assets/fonts/bpg_mrgvlovani_2010.ttf') format('truetype');
     font-weight: normal;
     font-style: normal;
 }
