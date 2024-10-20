@@ -4,6 +4,6 @@ import AgreementModule from "./views/AgreementModule.vue";
 
 <template>
   <div class="flex justify-center p-10">
-    <AgreementModule/>
+    <router-view/>
   </div>
 </template>
