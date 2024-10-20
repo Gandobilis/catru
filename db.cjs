@@ -17,21 +17,21 @@ function generateUniqueNumber() {
 
 // Generating users with unique personal numbers
 const users = Array.from({ length: 500_000 }, () => ({
-    personal_number: generateUniqueNumber(),
+    personalNumber: generateUniqueNumber(),
     name: faker.person.firstName(),
     surname: faker.person.lastName(),
     status: faker.helpers.arrayElement(['მოქმედი', 'უარყოფილი', 'გამოყენებული', 'ვადაგასული', 'გაუქმებული', 'დახურული']),
-    phone_number: faker.phone.number()
+    phoneNumber: faker.phone.number()
 }));
 
 // Generating companies with unique tax numbers and legal person tax numbers
 const companies = Array.from({ length: 500_000 }, () => ({
-    client_name: faker.company.name(),
-    tax_number: generateUniqueNumber(),
-    leg_person: faker.person.firstName() + " " + faker.person.firstName(),
-    leg_person_tax: generateUniqueNumber(),
+    clientName: faker.company.name(),
+    taxNumber: generateUniqueNumber(),
+    legPerson: faker.person.firstName() + " " + faker.person.firstName(),
+    legPersonTax: generateUniqueNumber(),
     status: faker.helpers.arrayElement(['მოქმედი', 'უარყოფილი', 'გამოყენებული', 'ვადაგასული', 'გაუქმებული', 'დახურული']),
-    phone_number: faker.phone.number()
+    phoneNumber: faker.phone.number()
 }));
 
 const sandro = {personal_number: 38001046165, name: "სანდრო", surname: 'ღუღუნიშვილი', status: "მოქმედი", phone_number: 598414141}
