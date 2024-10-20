@@ -1,4 +1,5 @@
 import {computed, ref, watch} from "vue";
+import {useRouter} from "vue-router";
 
 export default function useUser() {
     const formType = ref('MT')
@@ -152,6 +153,8 @@ export default function useUser() {
     });
 
     const success = ref()
+
+    const isChecked = ref(false);
     const handleClick = () => {
         if (formType.value === 'EL' && clientType.value === 'IND') {
             // ესემესის გაგზავნა
@@ -162,8 +165,19 @@ export default function useUser() {
         }
     };
 
+    const router = useRouter();
+
+    const acceptForm = () =>{
+        if (isChecked.value===true){
+            console.log("yes")
+            router.push('/confirm-sms');
+        }
+    }
+
     return {
         formType,
+        isChecked,
+        acceptForm,
         clientType,
         personalNumber,
         taxNumber,
