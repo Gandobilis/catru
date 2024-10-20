@@ -37,8 +37,6 @@ export default function useUser() {
         loading.value = true;
         notification.value = undefined;
         editable.value = undefined;
-        isPhoneNumberValid.value = false;
-        isPersonalNumberValid.value = false;
         user.value = undefined;
 
         if (personalOrTaxNumber.value) {
@@ -94,7 +92,6 @@ export default function useUser() {
         personalNumber: undefined,
         phoneNumber: undefined,
     })
-
     const _newUser = ref({
         clientName: undefined,
         taxNumber: undefined,
@@ -102,10 +99,6 @@ export default function useUser() {
         legPersonTax: undefined,
         phoneNumber: undefined
     })
-
-
-    const isPersonalNumberValid = ref(false);
-    const isPhoneNumberValid = ref(false)
 
     const formLang = ref('GE');
     const selectFormType = ref('CB-REC');
@@ -158,7 +151,6 @@ export default function useUser() {
         formLang,
         user,
         loading,
-        isPersonalNumberValid,
         selectFormType,
         _selectFormType,
         _selectFormTypeLeg,
