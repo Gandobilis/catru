@@ -114,6 +114,13 @@ export default function useUser() {
         phoneNumber: undefined
     })
 
+    const disabled = computed(() => {
+
+    })
+    const disabledLeg = computed(() => {
+
+    })
+
     const formLang = ref('GE');
     const selectFormType = ref('CB-REC');
     const selectFormTypeLeg = ref('CB-REC');
@@ -174,8 +181,8 @@ export default function useUser() {
         notification,
         editable,
         handleClick,
-        // isNewUserValid,
-        // is_NewUserValid,
+        disabled,
+        disabledLeg,
         success
     };
 }

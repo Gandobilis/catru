@@ -18,8 +18,8 @@ const {
   notification,
   editable,
   handleClick,
-  // isNewUserValid,
-  // is_NewUserValid,
+  disabled,
+  disabledLeg,
   success
 } = useUser()
 </script>
@@ -310,19 +310,21 @@ const {
 
 
         <button v-if="formType === 'MT'"
-                     class="send-print-button"
-                     :disabled="!user"
-                     @click="handleClick"
-                     v-text="'ბეჭდვა'"
+                class="send-print-button"
+                :disabled="disabled"
+                @click="handleClick"
+                v-text="'ბეჭდვა'"
         />
         <router-link v-else
-            to="/verify"
-        ><button
-                 class="send-print-button"
-                 :disabled="!user"
-                 @click="handleClick"
-                 v-text="'გაგზავნა'"
-        /></router-link>
+                     to="/verify"
+        >
+          <button
+              class="send-print-button"
+              :disabled="!user"
+              @click="disabledLeg"
+              v-text="'გაგზავნა'"
+          />
+        </router-link>
       </div>
     </div>
 
