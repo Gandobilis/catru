@@ -1,13 +1,12 @@
 <script setup>
 import useUser from "../composables/useUser.js";
-import {computed} from "vue";
 
 const {
   formType,
   clientType,
   personalOrTaxNumber,
-
-
+  newUser,
+  _newUser,
   formLang,
   user,
   loading,
@@ -16,31 +15,13 @@ const {
   _selectFormTypeLeg,
   selectFormTypeLeg,
   getUser,
-  sendSms,
-
-  newUser,
-  _newUser,
-  notification, editable
+  notification,
+  editable,
+  handleClick,
+  // isNewUserValid,
+  // is_NewUserValid,
+  success
 } = useUser()
-
-const prt = () => {
-  window.print()
-}
-
-const buttonText = computed(() =>
-    formType.value === 'MT' ? 'ბეჭდვა' : 'გაგზავნა'
-);
-
-const handleClick = () => {
-  if (formType === 'EL' && clientType === 'IND') {
-    sendSms()
-  } else {
-    prt()
-  }
-};
-
-const disabled = () => true
-const disabledLeg = () => true
 </script>
 
 <template>
@@ -72,7 +53,7 @@ const disabledLeg = () => true
     <div class="flex flex-col gap-y-3.5 py-3.5">
       <p class="text-sm">კლიენტის ტიპი</p>
 
-      <div class="flex items-center gap-x-[183px]">
+      <div class="flex items-center gap-x-[185px]">
         <div class="flex items-center gap-x-1">
           <input type="radio" name="IND-LEG" value="IND" v-model="clientType" checked/>
 
@@ -106,7 +87,7 @@ const disabledLeg = () => true
             v-if="!loading">შემოწმება
         </button>
 
-        <button v-else class="rounded-lg pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli">
+        <button v-else class="rounded-md pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli">
           <span class="loading loading-spinner loading-sm"></span>
         </button>
       </div>
@@ -159,7 +140,7 @@ const disabledLeg = () => true
         <div v-if="formType==='EL'" class="flex flex-col gap-2">
           <h2 class="text-sm font-medium">მობილური ტელეფონი</h2>
           <input disabled
-                 :value="user?.phone_number"
+                 :value="user?.phoneNumber"
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
           <input v-else
@@ -191,7 +172,7 @@ const disabledLeg = () => true
           <div class="flex w-1/2 flex-col gap-2">
             <h2 class="text-sm font-medium">საიდენტიფიკაციო ნომერი</h2>
             <input disabled
-                   :value="user?.tax_number"
+                   :value="user?.taxNumber"
                    class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="number" v-if="!editable">
             <input v-else
@@ -316,18 +297,33 @@ const disabledLeg = () => true
 
     <hr class="text-placeholder-grey"/>
 
-    <div class="flex justify-end pt-3.5 gap-x-3.5">
-      <button
-          class="w-20 rounded-md pt-3 pb-2 text-sm text-white bg-secondary-button-default font-mtavruli hover:bg-secondary-button-hover hover:transition">
-        გაუქმება
-      </button>
+    <div class="flex justify-between items-center pt-3.5 gap-x-3.5">
+      <p v-if="success" class="text-primary-blue font-mtavruli text-xs">შეტყობინება: <span
+          class="text-custom-green font-mtavruli" v-text="success"/></p>
+      <div v-else></div>
 
-      <button
-          class="send-print-button"
-          :disabled="formType === 'MT' ? disabled()  : disabledLeg()"
-          @click="handleClick"
-          v-text="buttonText"
-      />
+      <div class="flex gap-x-3.5">
+        <button
+            class="w-20 rounded-md pt-2.5 pb-1.5  text-sm text-white bg-secondary-button-default font-mtavruli hover:bg-secondary-button-hover hover:transition">
+          გაუქმება
+        </button>
+
+
+        <button v-if="formType === 'MT'"
+                     class="send-print-button"
+                     :disabled="!user"
+                     @click="handleClick"
+                     v-text="'ბეჭდვა'"
+        />
+        <router-link v-else
+            to="/verify"
+        ><button
+                 class="send-print-button"
+                 :disabled="!user"
+                 @click="handleClick"
+                 v-text="'გაგზავნა'"
+        /></router-link>
+      </div>
     </div>
 
     <hr v-if="false"/> <!--ლოგიკა დასამატებელია-->
@@ -343,6 +339,6 @@ const disabledLeg = () => true
 }
 
 .send-print-button {
-  @apply w-20 rounded-md pt-3 pb-2 text-sm text-white bg-primary-blue font-mtavruli hover:bg-primary-button-hover hover:transition disabled:text-placeholder-grey disabled:bg-stroke-grey disabled:cursor-not-allowed
+  @apply w-20 rounded-md pt-2.5 pb-1.5 text-sm text-white bg-primary-blue font-mtavruli hover:bg-primary-button-hover hover:transition disabled:text-placeholder-grey disabled:bg-stroke-grey disabled:cursor-not-allowed
 }
 </style>

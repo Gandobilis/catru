@@ -6,12 +6,26 @@ export default function useUser() {
     watch(clientType, () => {
         if (personalOrTaxNumber.value === personalNumber.value) {
             personalNumber.value = undefined
+            newUser.value = {
+                name: undefined,
+                surname: undefined,
+                personalNumber: undefined,
+                phoneNumber: undefined,
+            }
         } else {
             taxNumber.value = undefined
+            _newUser.value = {
+                clientName: undefined,
+                taxNumber: undefined,
+                legPerson: undefined,
+                legPersonTax: undefined,
+                phoneNumber: undefined
+            }
         }
         notification.value = undefined
         editable.value = false
         user.value = undefined
+        success.value = undefined
     })
 
     const personalNumber = ref();
@@ -130,14 +144,16 @@ export default function useUser() {
         _selectFormTypeLeg.value = selectFormTypesLeg[value];
     });
 
-    const clearFields = () => {
-        user.value = null
-    }
-    const sendSms = async () => {
-        notification.value = "თანხმობის ფორმა წარმატებით გაიგზავნა"
-        clearFields()
-    }
-
+    const success = ref()
+    const handleClick = () => {
+        if (formType.value === 'EL' && clientType.value === 'IND') {
+            // ესემესის გაგზავნა
+            success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
+        } else {
+            // ბეჭდვა
+            success.value = 'თანხმობის ფორმა დაიბეჭდა წარმატებით'
+        }
+    };
 
     return {
         formType,
@@ -145,7 +161,6 @@ export default function useUser() {
         personalNumber,
         taxNumber,
         personalOrTaxNumber,
-
         newUser,
         _newUser,
         formLang,
@@ -155,9 +170,12 @@ export default function useUser() {
         _selectFormType,
         _selectFormTypeLeg,
         selectFormTypeLeg,
-        sendSms,
         getUser,
         notification,
         editable,
+        handleClick,
+        // isNewUserValid,
+        // is_NewUserValid,
+        success
     };
 }
