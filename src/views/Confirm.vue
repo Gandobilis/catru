@@ -1,25 +1,14 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue';
-
+import useUser from "../composables/useUser.js";
+import MobileIcon from "../assets/icons/mobileIcon.vue";
+const {continueAction,isContinueEnabled , code, startCountdown, countdown, resendCode, isResendEnabled} = useUser();
 // Create a reactive array to store the values of the 4 inputs
-const code = ref(['', '', '', '']);
 
 // Timer state
-const countdown = ref(60);
-const isResendEnabled = ref(false);
 
 // Function to start the countdown timer
-const startCountdown = () => {
-  countdown.value = 60;
-  isResendEnabled.value = false;
-  const interval = setInterval(() => {
-    countdown.value--;
-    if (countdown.value === 0) {
-      clearInterval(interval);
-      isResendEnabled.value = true;
-    }
-  }, 1000);
-};
+
 
 // Run the timer when the component is mounted
 onMounted(() => {
@@ -34,20 +23,16 @@ const handleInput = (event, index) => {
   if (/^\d$/.test(value)) {
     code.value[index] = value;
 
-    // Move focus to the next input if not the last field
     if (index < 3) {
       event.target.nextElementSibling.focus();
     }
   } else {
-    // If input is not a digit, clear the field
     code.value[index] = '';
   }
 };
 
-// Function to handle backspace key press
 const handleBackspace = (event, index) => {
   if (event.key === 'Backspace' && code.value[index] === '') {
-    // Move focus to the previous input if not the first field
     if (index > 0) {
       code.value[index - 1] = '';
       event.target.previousElementSibling.focus();
@@ -55,26 +40,6 @@ const handleBackspace = (event, index) => {
   }
 };
 
-// Function to resend the code
-const resendCode = () => {
-  if (isResendEnabled.value) {
-    startCountdown();
-    // Add logic here to resend the verification code if necessary
-    console.log('Resending code...');
-  }
-};
-
-// Function to handle the "გაგრძელება" button click
-const continueAction = () => {
-  if (isContinueEnabled.value) {
-    console.log('დადასტურება button pressed.');
-  }
-};
-
-// Computed property to check if all fields are filled
-const isContinueEnabled = computed(() => code.value.every(digit => digit !== ''));
-
-// Computed property to calculate the button's background fill percentage
 const resendButtonFill = computed(() => {
   const percentage = ((60 - countdown.value) / 60) * 100;
   return `linear-gradient(to right, #1C5285 ${percentage}%, #D0D5DD ${percentage}%)`;
@@ -82,7 +47,8 @@ const resendButtonFill = computed(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-12">
+  <div class="w-full flex flex-col gap-10 items-center">
+    <mobile-icon class="-mb-5"/>
     <p class="text-primary-blue text-center font-bold">
       გთხოვთ შეიყვანეთ ერთჯერადი დადასტურების კოდი
     </p>
@@ -90,7 +56,9 @@ const resendButtonFill = computed(() => {
     <p class="text-placeholder-grey text-sm text-center">
       ერთჯერადი დადასტურების კოდი გამოგზავნილია თქვენს მობილურ ტელეფონზე +995 59* ** ** *0
     </p>
-
+    <p class="text-center text-sm text-primary-blue">
+      {{ ` ${String(Math.floor(countdown / 60)).padStart(2, '0')}:${String(countdown % 60).padStart(2, '0')}` }}
+    </p>
     <div class="flex justify-center gap-4">
       <input
           v-for="(digit, index) in code"
@@ -104,9 +72,6 @@ const resendButtonFill = computed(() => {
       />
     </div>
 
-    <p class="text-center text-sm text-placeholder-grey">
-      {{ countdown > 0 ? `კოდი ხელმისაწვდომი გახდება ${countdown} წამში` : 'ახლა შეგიძლიათ ხელახლა გამოგზავნოთ კოდი' }}
-    </p>
 
     <div class="flex justify-center gap-4">
       <button

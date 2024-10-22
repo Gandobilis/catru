@@ -173,8 +173,43 @@ export default function useUser() {
             router.push('/confirm-sms');
         }
     }
+    const isContinueEnabled = computed(() => code.value.every(digit => digit !== ''));
+    const code = ref(['', '', '', '']);
 
+    const continueAction = () => {
+        if (isContinueEnabled.value) {
+            console.log('დადასტურება button pressed.');
+        }
+    };
+    const isResendEnabled = ref(false);
+    const resendCode = () => {
+        if (isResendEnabled.value) {
+            startCountdown();
+            // Add logic here to resend the verification code if necessary
+            console.log('Resending code...');
+        }
+    };
+    const countdown = ref(60);
+
+    const startCountdown = () => {
+        countdown.value = 60;
+        isResendEnabled.value = false;
+        const interval = setInterval(() => {
+            countdown.value--;
+            if (countdown.value === 0) {
+                clearInterval(interval);
+                isResendEnabled.value = true;
+            }
+        }, 1000);
+    };
     return {
+        countdown,
+        startCountdown,
+        resendCode,
+        isResendEnabled,
+        code,
+        isContinueEnabled,
+        continueAction,
         formType,
         isChecked,
         acceptForm,
