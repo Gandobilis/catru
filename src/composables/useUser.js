@@ -1,5 +1,7 @@
 import {computed, ref, watch} from "vue";
 import {useRouter} from "vue-router";
+import {xml2json} from 'xml-js';
+import axios from "axios";
 
 export default function useUser() {
     const formType = ref('MT')
@@ -56,41 +58,73 @@ export default function useUser() {
 
         if (personalOrTaxNumber.value) {
             try {
-                const response = await fetch(`http://localhost:3000/${clientType.value === 'IND' ? 'users?personal_number' : 'companies?tax_number'}=${personalOrTaxNumber.value}`);
-                const data = await response.json();
+                const url = `${import.meta.env.VITE_API_BASE_URL}users`
 
-                if (data.length > 0) {
-                    const _user = data[0];
-                    if (_user.status === 'გაუქმებული') {
-                        notification.value = 'აღნიშნული ნომრით კლიენტი გაუქმებულია.';
-                        editable.value = true;
-                    } else if (_user.status === 'დახურული') {
-                        notification.value = 'აღნიშნული ნომრით კლიენტი დახურულია.';
-                        editable.value = true;
+                const Tag = clientType.value === 'IND' ? 'PIN' : 'TaxpayerId';
+                const request_body = `
+                        <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+                            <Header>
+                                <RequestHeaders xmlns="http://services.altasoft.ge/common/v1.0">
+                                    <ApplicationKey>[string]</ApplicationKey>
+                                    <RequestId>[string]</RequestId>
+                                </RequestHeaders>
+                            </Header>
+                            <Body>
+                                <ListCustomers xmlns="http://services.altasoft.ge/customers/v1.0">
+                                    <Query>
+                                        <ControlFlags>Basic</ControlFlags>
+                                        <Id>851375</Id>
+                                        <${Tag}>${personalOrTaxNumber.value}</${Tag}>
+                                    </Query>
+                                </ListCustomers>
+                            </Body>
+                        </Envelope>
+                    `;
+                const response = await axios.post(url, request_body, {
+                    headers: {
+                        'Content-Type': 'application/xml'
+                    }
+                });
+                const data = JSON.parse(xml2json(response.data, {compact: true, spaces: 4}));
+                console.log(data)
+
+
+                // const customer = data[0];
+                const customer = data["Envelope"]["Body"]["ListCustomersResponse"]["Result"]["Customer"]
+                console.log(customer)
+
+                if (customer["Status"]["_text"] === 'Cancelled') {
+                    notification.value = 'აღნიშნული ნომრით კლიენტი გაუქმებულია.';
+                    editable.value = true;
+                } else if (customer["Status"]["_text"] === 'Closed') {
+                    notification.value = 'აღნიშნული ნომრით კლიენტი დახურულია.';
+                    editable.value = true;
+                } else {
+                    if (clientType.value === 'IND') {
+                        user.value = {
+                            name: customer.name,
+                            surname: customer.surname,
+                            personalNumber: customer.personal_number,
+                            phoneNumber: customer.phone_number,
+                        }
                     } else {
-                        if (clientType.value === 'IND') {
-                            user.value = {
-                                name: _user.name,
-                                surname: _user.surname,
-                                personalNumber: _user.personal_number,
-                                phoneNumber: _user.phone_number,
-                            }
-                        } else {
-                            user.value = {
-                                clientName: _user.client_name,
-                                taxNumber: _user.tax_number,
-                                legPerson: _user.leg_person,
-                                legPersonTax: _user.leg_person_tax,
-                                phoneNumber: _user.phone_number
-                            }
+                        user.value = {
+                            clientName: customer.client_name,
+                            taxNumber: customer.tax_number,
+                            legPerson: customer.leg_person,
+                            legPersonTax: customer.leg_person_tax,
+                            phoneNumber: customer.phone_number
                         }
                     }
-                } else {
+                }
+
+            } catch (error) {
+                if (error.status === 404) {
                     notification.value = 'აღნიშნული ნომრით კლიენტი არ მოიძებნა.';
                     editable.value = true;
+                } else {
+                    notification.value = 'სერვერზე დაფიქსირდა შეცდომა.'
                 }
-            } catch (error) {
-                notification.value = 'სერვერზე დაფიქსირდა შეცდომა.'
             } finally {
                 loading.value = false;
             }
@@ -167,8 +201,8 @@ export default function useUser() {
 
     const router = useRouter();
 
-    const acceptForm = () =>{
-        if (isChecked.value===true){
+    const acceptForm = () => {
+        if (isChecked.value === true) {
             console.log("yes")
             router.push('/confirm-sms');
         }
