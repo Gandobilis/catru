@@ -90,9 +90,9 @@ export default function useUser() {
                 console.log(data)
 
 
-                // const customer = data[0];
                 const customer = data["Envelope"]["Body"]["ListCustomersResponse"]["Result"]["Customer"]
-                console.log(customer)
+                // console.log(data)
+                // console.log(customer)
 
                 if (customer["Status"]["_text"] === 'Cancelled') {
                     notification.value = 'აღნიშნული ნომრით კლიენტი გაუქმებულია.';
@@ -106,8 +106,9 @@ export default function useUser() {
                             name: customer['Entity']['Name']['FirstName']['ValueGeo']['_text'],
                             surname: customer['Entity']['Name']['LastName']['ValueGeo']['_text'],
                             personalNumber: customer['Entity']['PIN']['_text'],
-                            phoneNumber: undefined,
+                            phoneNumber: customer['ContactInfo']['SMSPhone']['_text'],
                         }
+
                     } else {
                         user.value = {
                             clientName: customer['Name']['ValueGeo']['_text'],
@@ -127,7 +128,6 @@ export default function useUser() {
                 } else {
                     notification.value = 'სერვერზე დაფიქსირდა შეცდომა.'
                 }
-                console.error(error)
             } finally {
                 loading.value = false;
             }
@@ -158,7 +158,7 @@ export default function useUser() {
     const disabledLeg = computed(() => {
         const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
         console.log(SECRET_KEY)
-        const token = jwt.encode({ user: 'example' }, SECRET_KEY);
+        const token = jwt.encode({user: 'example'}, SECRET_KEY);
         console.log(token)
     })
 
