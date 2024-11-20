@@ -2,6 +2,7 @@ import {computed, ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {xml2json} from 'xml-js';
 import axios from "axios";
+import jwt from "jwt-simple";
 
 export default function useUser() {
     const formType = ref('MT')
@@ -58,7 +59,7 @@ export default function useUser() {
 
         if (personalOrTaxNumber.value) {
             try {
-                const url = `${import.meta.env.VITE_API_BASE_URL}users`
+                const url = `${import.meta.env.VITE_API_BASE_URL}/users`
 
                 const Tag = clientType.value === 'IND' ? 'PIN' : 'TaxpayerId';
                 const request_body = `
@@ -102,20 +103,21 @@ export default function useUser() {
                 } else {
                     if (clientType.value === 'IND') {
                         user.value = {
-                            name: customer.name,
-                            surname: customer.surname,
-                            personalNumber: customer.personal_number,
-                            phoneNumber: customer.phone_number,
+                            name: customer['Entity']['Name']['FirstName']['ValueGeo']['_text'],
+                            surname: customer['Entity']['Name']['LastName']['ValueGeo']['_text'],
+                            personalNumber: customer['Entity']['PIN']['_text'],
+                            phoneNumber: undefined,
                         }
                     } else {
                         user.value = {
-                            clientName: customer.client_name,
-                            taxNumber: customer.tax_number,
-                            legPerson: customer.leg_person,
-                            legPersonTax: customer.leg_person_tax,
-                            phoneNumber: customer.phone_number
+                            clientName: customer['Name']['ValueGeo']['_text'],
+                            taxNumber: customer['TaxDetails']['TaxpayerId']['_text'],
+                            legPerson: undefined,
+                            legPersonTax: undefined,
+                            phoneNumber: undefined
                         }
                     }
+                    console.log(user.value)
                 }
 
             } catch (error) {
@@ -125,6 +127,7 @@ export default function useUser() {
                 } else {
                     notification.value = 'სერვერზე დაფიქსირდა შეცდომა.'
                 }
+                console.error(error)
             } finally {
                 loading.value = false;
             }
@@ -153,7 +156,10 @@ export default function useUser() {
 
     })
     const disabledLeg = computed(() => {
-
+        const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
+        console.log(SECRET_KEY)
+        const token = jwt.encode({ user: 'example' }, SECRET_KEY);
+        console.log(token)
     })
 
     const formLang = ref('GE');

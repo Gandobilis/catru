@@ -3,9 +3,13 @@ import { ref } from 'vue';
 import useUser from "../composables/useUser.js";
 import CartuIcon from "../assets/icons/cartuIcon.vue";
 
+
 const {isChecked,acceptForm } = useUser();
 
-// Create a ref to store the checkbox value
+
+
+
+
 </script>
 
 <template>
