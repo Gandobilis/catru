@@ -1,5 +1,6 @@
 <script setup>
 import useUser from "../composables/useUser.js";
+import {useRouter} from "vue-router";
 
 const {
   formType,
@@ -189,10 +190,6 @@ const {
           <div class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფლებამოსილი პირი (უფ.პ)</h2>
             <input
-                :value="user?.legPerson"
-                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
-                type="text" v-if="!editable">
-            <input v-else
                    v-model="_newUser.legPerson"
                    class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text">
@@ -201,10 +198,6 @@ const {
           <div class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფ.პ-ს პირადი ნომერი</h2>
             <input
-                :value="user?.legPersonTax"
-                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
-                type="text" v-if="!editable">
-            <input v-else
                    v-model="_newUser.legPersonTax"
                    class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text">
@@ -214,21 +207,14 @@ const {
           <div v-if="formType==='EL'" class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფ.პ-ს მობილური</h2>
             <input
-                :value="user?.phoneNumber"
-                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
-                type="text" v-if="!editable">
-            <input v-else
                    v-model="_newUser.phoneNumber"
                    class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text"
                    :maxlength="9"
-                   @input="_newUser.taxNumber = _newUser.taxNumber?.toString().slice(0, 9)">
+                   @input="_newUser.phoneNumber = _newUser.phoneNumber?.toString().slice(0, 9)">
           </div>
-
-
         </div>
       </div>
-
       <!--      იურიდიული პირი-->
 
     </div>
@@ -320,15 +306,13 @@ const {
         >
           <button
               class="send-print-button"
-              :disabled="!user"
-              @click="disabledLeg"
+              :disabled="disabled"
+              @click="useRouter().push('/verify')"
               v-text="'გაგზავნა'"
           />
         </router-link>
       </div>
     </div>
-
-    <hr v-if="false"/> <!--ლოგიკა დასამატებელია-->
   </div>
 </template>
 

@@ -2,7 +2,6 @@ import {computed, ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {xml2json} from 'xml-js';
 import axios from "axios";
-import jwt from "jwt-simple";
 
 export default function useUser() {
     const formType = ref('MT')
@@ -153,13 +152,33 @@ export default function useUser() {
     })
 
     const disabled = computed(() => {
-
-    })
-    const disabledLeg = computed(() => {
-        const SECRET_KEY = import.meta.env.VITE_SECRET_KEY;
-        console.log(SECRET_KEY)
-        const token = jwt.encode({user: 'example'}, SECRET_KEY);
-        console.log(token)
+        if (clientType.value === 'IND') {
+            if (editable.value) {
+                const user = newUser.value;
+                if (formType.value === 'MT') {
+                    return !user.name || !user.surname || !user.personalNumber
+                } else {
+                    return !user.name || !user.surname || !user.personalNumber || !user.phoneNumber
+                }
+            } else {
+                return !user.value
+            }
+        } else {
+            const _user = _newUser.value;
+            if (editable.value) {
+                if (formType.value === 'MT') {
+                    return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax
+                } else {
+                    return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber;
+                }
+            } else {
+                if (formType.value === 'MT') {
+                    return !user.value || !_user.legPerson || !_user.legPersonTax
+                } else {
+                    return !user.value || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber;
+                }
+            }
+        }
     })
 
     const formLang = ref('GE');
@@ -271,7 +290,6 @@ export default function useUser() {
         editable,
         handleClick,
         disabled,
-        disabledLeg,
         success
     };
 }
