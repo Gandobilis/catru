@@ -86,7 +86,7 @@ export default function useUser() {
                     }
                 });
                 const data = JSON.parse(xml2json(response.data, {compact: true, spaces: 4}));
-                console.log(data)
+                // console.log(data)
 
 
                 const customer = data["Envelope"]["Body"]["ListCustomersResponse"]["Result"]["Customer"]

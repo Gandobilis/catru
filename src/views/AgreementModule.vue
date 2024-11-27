@@ -20,7 +20,6 @@ const {
   editable,
   handleClick,
   disabled,
-  disabledLeg,
   success
 } = useUser()
 </script>
