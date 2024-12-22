@@ -241,26 +241,26 @@ const {
 
       <form v-if="clientType==='IND'" class="flex items-center justify-between font-medium">
         <div class="flex items-center gap-1">
-          <input type="radio" name="CB-RS" value="CB-REC" v-model="selectFormType" checked/>
+          <input type="radio" name="CF_CB_RS" value="CF_CB_REC" v-model="selectFormType" checked/>
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიღება</p>
         </div>
         <div class="flex items-center gap-1">
-          <input type="radio" name="CB-RS" value="CB-SEN" v-model="selectFormType"/>
+          <input type="radio" name="CF_CB_RS" value="CF_CB_SEN" v-model="selectFormType"/>
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიწოდება</p>
         </div>
         <div class="flex items-center gap-1">
-          <input type="radio" name="CB-RS" value="RS-REC" v-model="selectFormType"/>
+          <input type="radio" name="CF_CB_RS" value="CF_RS_REC" v-model="selectFormType"/>
           <p class="whitespace-nowrap text-xs">შემოსავლების სამსახური</p>
         </div>
       </form>
 
       <form v-if="clientType==='LEG'" class="flex items-center font-medium gap-x-[145px]">
         <div class="flex items-center gap-1">
-          <input type="radio" name="CB-RS" value="CB-REC" v-model="selectFormTypeLeg" checked/>
+          <input type="radio" name="CF_CB_RS" value="CB-REC" v-model="selectFormTypeLeg" checked/>
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიღება</p>
         </div>
         <div class="flex items-center gap-1">
-          <input type="radio" name="CB-RS" value="CB-SEN" v-model="selectFormTypeLeg"/>
+          <input type="radio" name="CF_CB_RS" value="CF_CB_SEN" v-model="selectFormTypeLeg"/>
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიწოდება</p>
         </div>
 

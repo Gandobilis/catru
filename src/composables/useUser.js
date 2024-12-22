@@ -182,22 +182,22 @@ export default function useUser() {
     })
 
     const formLang = ref('GE');
-    const selectFormType = ref('CB-REC');
-    const selectFormTypeLeg = ref('CB-REC');
+    const selectFormType = ref('CF_CB_REC');
+    const selectFormTypeLeg = ref('CF_CB_REC');
     const selectFormTypes = {
-        'CB-REC': [
+        'CF_CB_REC': [
             '• თანხმობა მონაცემების დამუშავების თაობაზე (30 დღე)',
             '• თანხმობა მონაცემების დამუშავების თაობაზე (გზავნილები) (30 დღე)'
         ],
-        'CB-SEN': ['• თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ'],
-        'RS-REC': ['• თანხმობის ფორმა შემოსავლების სამსახურიდან ინფორმაციის გამოთხოვის შესახებ']
+        'CF_CB_SEN': ['• თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ'],
+        'CF_RS_REC': ['• თანხმობის ფორმა შემოსავლების სამსახურიდან ინფორმაციის გამოთხოვის შესახებ']
     };
     const selectFormTypesLeg = {
-        'CB-REC': [
+        'CF_CB_REC': [
             '• თანხმობა მონაცემების დამუშავების თაობაზე (60 დღე)',
             '• თანხმობა მონაცემების დამუშავების თაობაზე (გზავნილები) (30 დღე)'
         ],
-        'CB-SEN': ['• თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ']
+        'CF_CB_SEN': ['• თანხმობა მონაცემების საკრედიტო ბიუროსთვის მიწოდების შესახებ']
     };
     const _selectFormType = ref(selectFormTypes[selectFormType.value]);
     const _selectFormTypeLeg = ref(selectFormTypesLeg[selectFormTypeLeg.value]);
@@ -214,12 +214,75 @@ export default function useUser() {
     const success = ref()
 
     const isChecked = ref(false);
+
     const handleClick = () => {
         if (formType.value === 'EL' && clientType.value === 'IND') {
             // ესემესის გაგზავნა
+            const data = {
+                SessionID: 100001, // შესაცვლელია
+                SenderID: 1, // შესაცვლელია
+                MobileNumber: user.value ? user.value.phoneNumber : _newUser.value.phoneNumber,
+                SentTemplateID: 1,// შესაცვლელია
+                TemplateCode: selectFormType.value, // შესაცვლელია
+                SMSMessageText: "", // ბექიდან
+                IDNumber: user.value.personalNumber, // შესაცვლელია
+                SendingDate: new Date().toISOString(),
+                SendingStatus: "წარმატებული", // ბექიდან
+                ApprovalRejectionDate: new Date().toISOString(), // ბექიდან
+                SenderIP: "0.0.0.0", // ბექიდან
+                OTP: 1234,// ბექიდან
+                Confirmation: "კი"// ბექიდან
+            }
             success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
         } else {
             // ბეჭდვა
+            const ReceiptDate = new Date();
+            const Deadline = 30; // შესაცვლელია
+            const ValidityDate = new Date(ReceiptDate);
+            ValidityDate.setDate(ValidityDate.getDate() + 30);
+
+            let data = {
+                FormType: formType.value,
+                SessionID: 1000001, // შესაცვლელია
+                TemplateID: 1, // შესაცვლელია
+                TemplateCode: selectFormType.value,
+                ClientType: clientType.value,
+                ReceiptDate: ReceiptDate.toISOString(),
+                Deadline: Deadline,
+                ValidityDate: ReceiptDate.toISOString(),
+                Status: "აქტიური", // ნაგულისხმევი
+                WithdrawalDate: new Date(), // კითხვა
+                Comment: "კლიენტის მოთხოვნით", // nullable
+            }
+            if (clientType.value === 'IND') {
+                data["ClientName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.name}`;
+                data["IDNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
+                data["AuthorizedName"] = "";
+                data["AuthorizedIDNumber"] = "";
+
+                for (let i = 0; i < _selectFormType.value.length; i++) {
+                    data["Name"] = _selectFormType.value[i];
+                    try {
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data);
+                    } catch (e) {
+                        console.log('Error adding IND consent form(s): ', e);
+                    }
+                }
+            } else if (clientType.value === 'LEG') {
+                data["ClientName"] = user.value ? user.value.clientName : _newUser.value.clientName;
+                data["IDNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
+                data["AuthorizedName"] = user.value ? user.value.legPerson : _newUser.value.legPerson;
+                data["AuthorizedIDNumber"] = user.value ? user.value.legPersonTax : _newUser.value.legPersonTax;
+
+                for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
+                    data["Name"] = _selectFormTypeLeg.value[i];
+                    try {
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data);
+                    } catch (e) {
+                        console.log('Error adding LEG consent form(s): ', e);
+                    }
+                }
+            }
             success.value = 'თანხმობის ფორმა დაიბეჭდა წარმატებით'
         }
     };
