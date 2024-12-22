@@ -1,8 +1,9 @@
 <script setup>
 import useUser from "../composables/useUser.js";
-import {useRouter} from "vue-router";
+import {onMounted, ref, watch} from "vue";
 
 const {
+  goToAgreementPage,
   formType,
   clientType,
   personalOrTaxNumber,
@@ -21,8 +22,13 @@ const {
   handleClick,
   disabled,
   success
-} = useUser()
+} = useUser();
+
+
+
+
 </script>
+
 
 <template>
   <div class="flex flex-col rounded-lg border shadow-xl p-3.5 w-[600px] border-stroke-grey">
@@ -306,7 +312,7 @@ const {
           <button
               class="send-print-button"
               :disabled="disabled"
-              @click="useRouter().push('/verify')"
+              @click="goToAgreementPage( newUser.phoneNumber, formType)"
               v-text="'გაგზავნა'"
           />
         </router-link>
