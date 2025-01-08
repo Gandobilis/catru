@@ -3,7 +3,6 @@ import useUser from "../composables/useUser.js";
 import {onMounted, ref, watch} from "vue";
 
 const {
-  goToAgreementPage,
   formType,
   clientType,
   personalOrTaxNumber,
@@ -307,16 +306,12 @@ const {
                 @click="handleClick"
                 v-text="'ბეჭდვა'"
         />
-        <router-link v-else
-                     to="/verify"
-        >
-          <button
+          <button v-else
               class="send-print-button"
               :disabled="disabled"
-              @click="goToAgreementPage( newUser.phoneNumber, formType)"
+              @click="handleClick"
               v-text="'გაგზავნა'"
           />
-        </router-link>
       </div>
     </div>
   </div>

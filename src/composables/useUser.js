@@ -89,7 +89,6 @@ export default function useUser() {
                 const data = JSON.parse(xml2json(response.data, {compact: true, spaces: 4}));
 
 
-
                 const customer = data["Envelope"]["Body"]["ListCustomersResponse"]["Result"]["Customer"]
                 // console.log(data)
                 // console.log(customer)
@@ -217,25 +216,41 @@ export default function useUser() {
     const isChecked = ref(false);
 
     const handleClick = () => {
-        if (formType.value === 'EL' && clientType.value === 'IND') {
+        if (formType.value === 'EL') {
             // ესემესის გაგზავნა
             const data = {
-                SessionID: 100001, // შესაცვლელია
-                SenderID: 1, // შესაცვლელია
-                MobileNumber: user.value ? user.value.phoneNumber : _newUser.value.phoneNumber,
-                SentTemplateID: 1,// შესაცვლელია
-                TemplateCode: selectFormType.value, // შესაცვლელია
-                SMSMessageText: "", // ბექიდან
-                IDNumber: user.value.personalNumber, // შესაცვლელია
-                SendingDate: new Date().toISOString(),
-                SendingStatus: "წარმატებული", // ბექიდან
-                ApprovalRejectionDate: new Date().toISOString(), // ბექიდან
-                SenderIP: "0.0.0.0", // ბექიდან
-                OTP: 1234,// ბექიდან
-                Confirmation: "კი"// ბექიდან
+                lang: formLang.value,
             }
-            success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
-        } else {
+
+            if (clientType.value === 'IND') {
+                data["fullName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
+                data["idNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
+                data["consentForm"] = selectFormType.value;
+
+                for (let i = 0; i < _selectFormType.value.length; i++) {
+                    try {
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data});
+                    } catch (e) {
+                        console.log('Error generating IND consent link(s): ', e);
+                    }
+                }
+                success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
+            } else if (clientType.value === 'LEG') {
+                data["fullName"] = user.value ? user.value.clientName : _newUser.value.clientName;
+                data["idNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
+                data["consentForm"] = selectFormTypeLeg.value;
+
+                for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
+                    try {
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data});
+                    } catch (e) {
+                        console.log('Error generating LEG consent link(s): ', e);
+                    }
+                }
+
+                success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
+            }
+        } else if (formType.value === 'MT') {
             // ბეჭდვა
             const ReceiptDate = new Date();
             const Deadline = 30; // შესაცვლელია
@@ -246,7 +261,6 @@ export default function useUser() {
                 FormType: formType.value,
                 SessionID: 1000001, // შესაცვლელია
                 TemplateID: 1, // შესაცვლელია
-                TemplateCode: selectFormType.value,
                 ClientType: clientType.value,
                 ReceiptDate: ReceiptDate.toISOString(),
                 Deadline: Deadline,
@@ -256,10 +270,11 @@ export default function useUser() {
                 Comment: "კლიენტის მოთხოვნით", // nullable
             }
             if (clientType.value === 'IND') {
-                data["ClientName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.name}`;
+                data["ClientName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
                 data["IDNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
                 data["AuthorizedName"] = "";
                 data["AuthorizedIDNumber"] = "";
+                data["TemplateCode"] = selectFormType.value;
 
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     data["Name"] = _selectFormType.value[i];
@@ -274,6 +289,7 @@ export default function useUser() {
                 data["IDNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
                 data["AuthorizedName"] = user.value ? user.value.legPerson : _newUser.value.legPerson;
                 data["AuthorizedIDNumber"] = user.value ? user.value.legPersonTax : _newUser.value.legPersonTax;
+                data["TemplateCode"] = selectFormTypeLeg.value;
 
                 for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
                     data["Name"] = _selectFormTypeLeg.value[i];
@@ -346,16 +362,10 @@ export default function useUser() {
 
     };
 
-
-    const goToAgreementPage = (phone, form) =>{
-
-
-    }
     return {
         visitLinkResponse,
         failed,
         visitLink,
-        goToAgreementPage,
         countdown,
         startCountdown,
         resendCode,
