@@ -79,6 +79,7 @@ const {
     <div class="flex flex-col gap-y-1.5 py-3.5">
       <p class="text-sm">კლიენტის ნომერი / {{ clientType === 'IND' ? 'პირადი ნომერი' : 'საიდენტიფიკაციო ნომერი' }}</p>
 
+
       <div class="flex gap-x-3.5">
         <input
             v-model="personalOrTaxNumber"

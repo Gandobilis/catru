@@ -46,6 +46,7 @@ export default function useUser() {
         }
     })
 
+
     const user = ref();
     const loading = ref(false);
     const editable = ref(false);
@@ -324,6 +325,26 @@ export default function useUser() {
             }
         }, 1000);
     };
+    const failed = ref(false)
+    const visitLinkResponse = ref()
+    const visitLink = async (uuid) => {
+
+        try {
+            const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}visit-link/${uuid}`, {
+                headers: {
+                    "ngrok-skip-browser-warning": "69420"
+                }
+            });
+
+            visitLinkResponse.value = response.data
+
+            failed.value = false
+        } catch (error) {
+            failed.value = true
+            console.error('Error visiting link:', error.status);
+        }
+
+    };
 
 
     const goToAgreementPage = (phone, form) =>{
@@ -331,6 +352,9 @@ export default function useUser() {
 
     }
     return {
+        visitLinkResponse,
+        failed,
+        visitLink,
         goToAgreementPage,
         countdown,
         startCountdown,

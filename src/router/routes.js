@@ -4,7 +4,7 @@ const routes = [
         component: () => import('/src/views/AgreementModule.vue'),
     },
     {
-        path: '/verify',
+        path: '/uuid/:uuid',
         component: () => import('/src/views/Verify.vue'),
     },
     {
@@ -22,7 +22,16 @@ const routes = [
     {
         path: '/filter',
         component: () => import('/src/views/Filters.vue'),
+    },
+    {
+        path: '/not-found',
+        component: () => import('/src/views/errorPage.vue'),
+    },
+    // Catch-all route for 404
+    {
+        path: '/:catchAll(.*)',
+        redirect: '/not-found',
     }
-]
+];
 
 export default routes;
