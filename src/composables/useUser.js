@@ -66,7 +66,7 @@ export default function useUser() {
 
         if (personalOrTaxNumber.value) {
             try {
-                const url = `${import.meta.env.VITE_API_BASE_URL}/users`
+                const url = `${import.meta.env.VITE_API_BASE_URL}users`
 
                 const Tag = clientType.value === 'IND' ? 'PIN' : 'TaxpayerId';
                 const request_body = `
