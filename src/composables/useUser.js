@@ -230,6 +230,7 @@ export default function useUser() {
                 data["fullName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
                 data["idNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
                 data["consentForm"] = selectFormType.value.split("_")[1];
+                data["phoneNum"] =  user.value ? user.value.phoneNumber : newUser.value.phoneNumber;
 
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     try {
@@ -243,6 +244,7 @@ export default function useUser() {
                 data["fullName"] = user.value ? user.value.clientName : _newUser.value.clientName;
                 data["idNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
                 data["consentForm"] = selectFormTypeLeg.value.split("_")[1];
+                data["phoneNum"] =  user.value ? user.value.phoneNumber : _newUser.value.phoneNumber;
 
                 for (let i = 0; i < _selectFormTypeLeg?.value.length; i++) {
                     try {
