@@ -12,11 +12,8 @@ const { isChecked, acceptForm, visitLink, failed, visitLinkResponse, smsError } 
 
 const checkFailed = async () => {
   await visitLink(uuid);
-  console.log(visitLinkResponse.value);
-
   if (failed.value) {
-    console.error("Visit failed.");
-    router.push('/not-found');  // Redirect to not-found page
+    await router.push('/not-found');  // Redirect to not-found page
   } else {
     pageLoaded.value = true;
   }

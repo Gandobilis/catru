@@ -2,19 +2,33 @@
 import { ref, computed, onMounted } from 'vue';
 import useUser from "../composables/useUser.js";
 import MobileIcon from "../assets/icons/mobileIcon.vue";
-import {useRoute} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
 
-const { continueAction, isContinueEnabled, code, startCountdown, countdown, resendCode, isResendEnabled, otpError } = useUser();
-
+const { continueAction, isContinueEnabled, code, startCountdown, countdown, resendCode, isResendEnabled, otpError, failed, visitLink } = useUser();
+const router = useRouter();  // Initialize router
+const pageLoaded = ref(false);
 const route = useRoute();
+
 const uuid = route.params.uuid;
 
-// Run the timer when the component is mounted
+
+const checkFailed = async () => {
+  await visitLink(uuid);
+  console.log(uuid)
+  if (failed.value) {
+    await router.push('/not-found');  // Redirect to not-found page
+  } else {
+    pageLoaded.value = true;
+  }
+};
+
+checkFailed()
 onMounted(() => {
   startCountdown();
 });
 
-// Function to handle input changes
+
+
 const handleInput = (event, index) => {
   let value = event.target.value;
 
