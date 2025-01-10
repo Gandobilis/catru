@@ -4,6 +4,8 @@ import {xml2json} from 'xml-js';
 import axios from "axios";
 
 export default function useUser() {
+    const router = useRouter();
+
     const formType = ref('MT')
     const clientType = ref('IND');
     watch(clientType, () => {
@@ -51,6 +53,17 @@ export default function useUser() {
     const loading = ref(false);
     const editable = ref(false);
     const notification = ref();
+
+
+
+
+
+
+
+
+
+
+
     const getUser = async () => {
         loading.value = true;
         notification.value = undefined;
@@ -225,7 +238,7 @@ export default function useUser() {
             if (clientType.value === 'IND') {
                 data["fullName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
                 data["idNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
-                data["consentForm"] = selectFormType.value;
+                data["consentForm"] = selectFormType.value.split("_")[1];
 
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     try {
@@ -238,11 +251,11 @@ export default function useUser() {
             } else if (clientType.value === 'LEG') {
                 data["fullName"] = user.value ? user.value.clientName : _newUser.value.clientName;
                 data["idNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
-                data["consentForm"] = selectFormTypeLeg.value;
+                data["consentForm"] = selectFormTypeLeg.value.split("_")[1];
 
-                for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
+                for (let i = 0; i < _selectFormTypeLeg?.value.length; i++) {
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data});
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data})
                     } catch (e) {
                         console.log('Error generating LEG consent link(s): ', e);
                     }
@@ -304,12 +317,54 @@ export default function useUser() {
         }
     };
 
-    const router = useRouter();
+    const userIp = ref()
 
-    const acceptForm = () => {
+    const getUserIp = async () => {
+        try {
+            const response = await axios.get("https://api.ipify.org");
+            userIp.value = response.data;
+
+        } catch (err) {
+            console.log(err);
+        }
+    };
+    const verifySms = async () => {
+        await getUserIp()
+        let userData = {
+            "SessionID": 523352523,
+            "SenderID": 23535253,
+            "MobileNumber": visitLinkResponse?.value.phone,
+            "SentTemplateID": 333,
+            "TemplateCode": clientType.value === "IND" ? selectFormType.value : selectFormTypeLeg.value,
+            "SenderIP": userIp.value,
+            "relID": visitLinkResponse?.value.rel_id,
+            "IDNumber": visitLinkResponse?.value.idNum
+        }
+        try {
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}sms-verifications`, {
+                userData
+            },{
+
+                headers: {
+                    "ngrok-skip-browser-warning": "69420"
+                },
+
+            });
+
+            console.log(response)
+
+        } catch (error) {
+            failed.value = true
+            console.error('Error visiting link:', error.status);
+        }
+    };
+
+    const acceptForm = (uuid) => {
+
         if (isChecked.value === true) {
+            verifySms()
             console.log("yes")
-            router.push('/confirm-sms');
+            router.push('/confirm-sms/'+uuid);
         }
     }
     const isContinueEnabled = computed(() => code.value.every(digit => digit !== ''));
@@ -362,7 +417,12 @@ export default function useUser() {
 
     };
 
+
+
+
+
     return {
+        verifySms,
         visitLinkResponse,
         failed,
         visitLink,

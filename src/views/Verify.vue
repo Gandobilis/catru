@@ -8,7 +8,7 @@ const router = useRouter();  // Initialize router
 const uuid = route.params.uuid;
 const pageLoaded = ref(false);
 
-const { isChecked, acceptForm, visitLink, failed, visitLinkResponse } = useUser();
+const { isChecked, acceptForm, visitLink, failed, visitLinkResponse, verifySms } = useUser();
 
 const checkFailed = async () => {
   await visitLink(uuid);
@@ -60,7 +60,7 @@ checkFailed();
           </button>
 
           <button
-              @click="acceptForm"
+              @click="acceptForm(uuid)"
               :disabled="!isChecked"
               class="rounded-xl p-3 md:text-lg text-sm text-white bg-primary-blue font-mtavruli hover:transition"
               :class="!isChecked ? 'bg-stroke-grey !text-placeholder-grey cursor-not-allowed' : ''">

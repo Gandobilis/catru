@@ -8,7 +8,7 @@ const routes = [
         component: () => import('/src/views/Verify.vue'),
     },
     {
-        path: '/confirm-sms',
+        path: '/confirm-sms/:uuid',
         component: () => import('/src/views/Confirm.vue'),
     },
     {
