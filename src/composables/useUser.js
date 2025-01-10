@@ -6,6 +6,9 @@ import axios from "axios";
 export default function useUser() {
     const router = useRouter();
 
+    const smsError = ref('');
+    const otpError = ref('');
+
     const formType = ref('MT')
     const clientType = ref('IND');
     watch(clientType, () => {
@@ -230,7 +233,7 @@ export default function useUser() {
                 data["fullName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
                 data["idNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
                 data["consentForm"] = selectFormType.value.split("_")[1];
-                data["phoneNum"] =  user.value ? user.value.phoneNumber : newUser.value.phoneNumber;
+                data["phoneNum"] = user.value ? user.value.phoneNumber : newUser.value.phoneNumber;
 
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     try {
@@ -244,7 +247,7 @@ export default function useUser() {
                 data["fullName"] = user.value ? user.value.clientName : _newUser.value.clientName;
                 data["idNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
                 data["consentForm"] = selectFormTypeLeg.value.split("_")[1];
-                data["phoneNum"] =  user.value ? user.value.phoneNumber : _newUser.value.phoneNumber;
+                data["phoneNum"] = user.value ? user.value.phoneNumber : _newUser.value.phoneNumber;
 
                 for (let i = 0; i < _selectFormTypeLeg?.value.length; i++) {
                     try {
@@ -347,17 +350,18 @@ export default function useUser() {
             console.log(response)
 
         } catch (error) {
-            failed.value = true
+            smsError.value = 'სერვერზე დაფიქსირდა შეცდომა!'
             console.error('Error visiting link:', error.status);
         }
     };
 
-    const acceptForm = (uuid) => {
-
+    const acceptForm = async (uuid) => {
         if (isChecked.value === true) {
-            verifySms()
+            await verifySms()
             console.log("yes")
-            router.push('/confirm-sms/' + uuid);
+            if (!smsError.value) {
+                await router.push('/confirm-sms/' + uuid);
+            }
         }
     }
     const isContinueEnabled = computed(() => code.value.every(digit => digit !== ''));
@@ -369,12 +373,14 @@ export default function useUser() {
         }
 
         try {
+            otpError.value = '';
             await axios.post(`${import.meta.env.VITE_API_BASE_URL}verify-otp`, {
                 otp: code.value.join(''),
                 token: uuid
             });
             router.push('/success');
         } catch (e) {
+            otpError.value = 'თქვენ მიერ შეყვანილი კოდი არასწორია!'
             console.log("Error while verifying opt: ", e);
         }
     };
@@ -454,6 +460,8 @@ export default function useUser() {
         editable,
         handleClick,
         disabled,
-        success
+        success,
+        otpError,
+        smsError
     };
 }

@@ -8,7 +8,7 @@ const router = useRouter();  // Initialize router
 const uuid = route.params.uuid;
 const pageLoaded = ref(false);
 
-const { isChecked, acceptForm, visitLink, failed, visitLinkResponse, verifySms } = useUser();
+const { isChecked, acceptForm, visitLink, failed, visitLinkResponse, smsError } = useUser();
 
 const checkFailed = async () => {
   await visitLink(uuid);
@@ -52,6 +52,8 @@ checkFailed();
                  class="md:w-[20px] md:h-[20px] w-14px h-14px appearance-none border rounded custom-checkbox"/>
           <p class="md:text-lg text-sm">ვეთანხმები</p>
         </div>
+
+        <span class="text-xs text-secondary-button-default" v-if="smsError" v-text="smsError"/>
 
         <div class="w-full flex md:justify-end justify-center gap-4">
           <button

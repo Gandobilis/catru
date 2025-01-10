@@ -4,7 +4,7 @@ import useUser from "../composables/useUser.js";
 import MobileIcon from "../assets/icons/mobileIcon.vue";
 import {useRoute} from "vue-router";
 
-const { continueAction, isContinueEnabled, code, startCountdown, countdown, resendCode, isResendEnabled } = useUser();
+const { continueAction, isContinueEnabled, code, startCountdown, countdown, resendCode, isResendEnabled, otpError } = useUser();
 
 const route = useRoute();
 const uuid = route.params.uuid;
@@ -81,6 +81,8 @@ const resendButtonFill = computed(() => {
           @keypress="event => { if (!/^\d$/.test(event.key)) event.preventDefault(); }"
       />
     </div>
+
+    <span class="text-xs text-secondary-button-default" v-if="otpError" v-text="otpError"/>
 
     <div class="flex justify-center gap-4">
       <button
