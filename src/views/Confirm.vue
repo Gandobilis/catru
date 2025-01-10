@@ -2,8 +2,12 @@
 import { ref, computed, onMounted } from 'vue';
 import useUser from "../composables/useUser.js";
 import MobileIcon from "../assets/icons/mobileIcon.vue";
+import {useRoute} from "vue-router";
 
 const { continueAction, isContinueEnabled, code, startCountdown, countdown, resendCode, isResendEnabled } = useUser();
+
+const route = useRoute();
+const uuid = route.params.uuid;
 
 // Run the timer when the component is mounted
 onMounted(() => {
@@ -92,7 +96,7 @@ const resendButtonFill = computed(() => {
           class="rounded-xl p-3 md:text-lg text-sm text-white bg-primary-blue font-mtavruli hover:transition"
           :class="isContinueEnabled ? 'bg-primary-blue' : 'bg-stroke-grey'"
           :disabled="!isContinueEnabled"
-          @click="continueAction"
+          @click="continueAction(uuid)"
       >
         ბანკში გაგზავნა
       </button>

@@ -55,15 +55,6 @@ export default function useUser() {
     const notification = ref();
 
 
-
-
-
-
-
-
-
-
-
     const getUser = async () => {
         loading.value = true;
         notification.value = undefined;
@@ -343,7 +334,7 @@ export default function useUser() {
         try {
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}sms-verifications`, {
                 userData
-            },{
+            }, {
 
                 headers: {
                     "ngrok-skip-browser-warning": "69420"
@@ -364,15 +355,25 @@ export default function useUser() {
         if (isChecked.value === true) {
             verifySms()
             console.log("yes")
-            router.push('/confirm-sms/'+uuid);
+            router.push('/confirm-sms/' + uuid);
         }
     }
     const isContinueEnabled = computed(() => code.value.every(digit => digit !== ''));
     const code = ref(['', '', '', '']);
 
-    const continueAction = () => {
+    const continueAction = async (uuid) => {
         if (isContinueEnabled.value) {
             console.log('დადასტურება button pressed.');
+        }
+
+        try {
+            await axios.post('verify-otp', {
+                opt: code.value.join(''),
+                token: uuid
+            });
+            router.push('/success');
+        } catch (e) {
+            console.log("Error while verifying opt: ", e);
         }
     };
     const isResendEnabled = ref(false);
@@ -416,9 +417,6 @@ export default function useUser() {
         }
 
     };
-
-
-
 
 
     return {
