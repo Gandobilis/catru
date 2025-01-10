@@ -369,8 +369,8 @@ export default function useUser() {
         }
 
         try {
-            await axios.post('verify-otp', {
-                opt: code.value.join(''),
+            await axios.post(`${import.meta.env.VITE_API_BASE_URL}verify-otp`, {
+                otp: code.value.join(''),
                 token: uuid
             });
             router.push('/success');
