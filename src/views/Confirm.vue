@@ -101,8 +101,7 @@ onMounted(() => {
           class="border border-gray-300 w-12 h-12 text-center text-xl rounded-md"
           @input="handleInput($event, index)"
           @keydown="handleBackspace($event, index)"
-          @keypress="event => { if (!/^\d$/.test(event.key)) event.preventDefault(); }"
-      />
+          @keypress="event => { if (!/^\d$/.test(event.key)) event.preventDefault(); }"/>
     </div>
 
     <span class="text-xs text-secondary-button-default" v-if="otpError" v-text="otpError"/>

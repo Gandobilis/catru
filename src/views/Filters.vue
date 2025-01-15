@@ -1,8 +1,8 @@
 <script setup>
 import {onMounted, ref, watch} from "vue";
-import useUser from "../composables/useFilters.js";
+import useUser from "/src/composables/useFilters.js";
 import {DateTime} from "luxon";
-import XIcon from "../assets/icons/xIcon.vue";
+import XIcon from "/src/assets/icons/xIcon.vue";
 
 const {getData, data, currentPage, totalPages} = useUser();
 
@@ -58,12 +58,11 @@ onMounted(async () => {
 <template>
   <div v-if="data" class="overflow-x-auto flex flex-col gap-12">
     <div class="w-full flex gap-24 justify-between">
-
-      <!-- Display Active Filters Here -->
       <div class="flex gap-5">
         <div v-if="status"
              class="rounded-xl border p-3 md:text-lg gap-5 flex text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none">
           <span class="text-gray-700">{{ status }}</span>
+
           <button @click="clearFilter('status')" class="text-red-500">
             <x-icon/>
           </button>
@@ -71,6 +70,7 @@ onMounted(async () => {
         <div v-if="formType"
              class="rounded-xl border p-3 md:text-lg gap-5 flex text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none">
           <span class="text-gray-700">{{ formType }}</span>
+
           <button @click="clearFilter('formType')" class="text-red-500">
             <x-icon/>
           </button>
@@ -78,6 +78,7 @@ onMounted(async () => {
         <div v-if="receiptDate"
              class="rounded-xl border p-3 md:text-lg gap-5 flex text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none">
           <span class="text-gray-700"> {{ formatDate(receiptDate) }}</span>
+
           <button @click="clearFilter('receiptDate')" class="text-red-500">
             <x-icon/>
           </button>
@@ -85,6 +86,7 @@ onMounted(async () => {
         <div v-if="IDNumber"
              class="rounded-xl border p-3 md:text-lg gap-5 flex text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none">
           <span class="text-gray-700"> {{ IDNumber }}</span>
+
           <button @click="clearFilter('IDNumber')" class="text-red-500">
             <x-icon/>
           </button>
@@ -98,6 +100,7 @@ onMounted(async () => {
             placeholder="პირადი/კლიენტის ნომერი"
             class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
         />
+
         <input
             v-model="status"
             placeholder="სტატუსი"
@@ -110,6 +113,7 @@ onMounted(async () => {
             placeholder="თარიღი"
             class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none text-gray-500"
         />
+
         <input
             v-model="formType"
             placeholder="თანხმობის ტიპი"
@@ -137,6 +141,7 @@ onMounted(async () => {
         <th class="border border-gray-300 px-4 py-2" style="width: 200px; height: 50px;">მოქმედების ვადა</th>
       </tr>
       </thead>
+
       <tbody>
       <tr v-for="user in data" :key="user.id">
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.ClientName }}</td>
@@ -159,16 +164,16 @@ onMounted(async () => {
       <button
           @click="changePage(currentPage - 1)"
           :disabled="currentPage === 1"
-          class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
-      >
+          class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50">
         წინა გვერდი
       </button>
+
       <span class="px-4 py-2">{{ currentPage }} / {{ totalPages }}</span>
+
       <button
           @click="changePage(currentPage + 1)"
           :disabled="currentPage === totalPages"
-          class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50"
-      >
+          class="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50">
         შემდეგი გვერდი
       </button>
     </div>
