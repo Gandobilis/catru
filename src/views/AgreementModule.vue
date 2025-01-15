@@ -22,10 +22,6 @@ const {
   disabled,
   success
 } = useUser();
-
-
-
-
 </script>
 
 
@@ -262,7 +258,7 @@ const {
 
       <form v-if="clientType==='LEG'" class="flex items-center font-medium gap-x-[145px]">
         <div class="flex items-center gap-1">
-          <input type="radio" name="CF_CB_RS" value="CB-REC" v-model="selectFormTypeLeg" checked/>
+          <input type="radio" name="CF_CB_RS" value="CF_CB_REC" v-model="selectFormTypeLeg" checked/>
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიღება</p>
         </div>
         <div class="flex items-center gap-1">
