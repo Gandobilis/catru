@@ -1,6 +1,6 @@
 import {createRouter, createWebHistory} from 'vue-router';
 import routes from "./routes";
-import axios from "axios";
+import axiosInstance from "/src/interceptors/axios/index.js";
 
 const router = createRouter({
     history: createWebHistory(),
@@ -10,7 +10,7 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     if (to.meta.requiresAuth) {
         try {
-            await axios.get(`${import.meta.env.VITE_API_BASE_URL}get-session`, {
+            await axiosInstance.get('get-session', {
                 withCredentials: true,
             });
             next();
