@@ -1,6 +1,5 @@
 <script setup>
 import useUser from "../composables/useUser.js";
-import {onMounted, ref, watch} from "vue";
 
 const {
   formType,
@@ -22,8 +21,6 @@ const {
   disabled,
   success
 } = useUser();
-
-console.log(document.cookie)
 </script>
 
 

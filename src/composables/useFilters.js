@@ -1,14 +1,12 @@
-import { ref } from "vue";
-import axios from "axios";
+import {ref} from "vue";
+import axiosInstance from "/src/interceptors/axios/index.js";
 
 export default function useFilters() {
-    const getDataUrl = `${import.meta.env.VITE_API_BASE_URL}consent-forms`;
-
     const data = ref();
-    const totalPages = ref(0); // Store the total number of pages
-    const currentPage = ref(1); // Default to the first page
+    const totalPages = ref(0);
+    const currentPage = ref(1);
 
-    const getData = (filters = {}) => {
+    const getData = async (filters = {}) => {
         const filteredParams = {};
 
         if (filters.Status) filteredParams.Status = filters.Status;
@@ -16,20 +14,17 @@ export default function useFilters() {
         if (filters.ReceiptDate) filteredParams.ReceiptDate = filters.ReceiptDate;
         if (filters.IDNumber) filteredParams.IDNumber = filters.IDNumber;
 
-        // Include pagination params
         filteredParams.page = currentPage.value;
 
         const queryParams = new URLSearchParams(filteredParams).toString();
-        const fullUrl = `${getDataUrl}?${queryParams}`;
 
-        axios.get(fullUrl, {
+        await axiosInstance.get(`consent-forms?${queryParams}`, {
             headers: {
-                "ngrok-skip-browser-warning": "69420"
+                "ngrok-skip-browser-warning": "69420" // წასაშლელია
             }
         }).then(res => {
-            console.log(res.data);
             data.value = res.data.data;
-            totalPages.value = res.data.totalPage; // Update the total pages
+            totalPages.value = res.data.totalPage;
         }).catch(err => console.error(err));
     };
 

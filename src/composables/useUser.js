@@ -1,8 +1,8 @@
 import {computed, ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {xml2json} from 'xml-js';
+import axiosInstance from "/src/interceptors/axios";
 import axios from "axios";
-import cookies from "vue-cookies";
 
 export default function useUser() {
     const router = useRouter();
@@ -67,8 +67,6 @@ export default function useUser() {
 
         if (personalOrTaxNumber.value) {
             try {
-                const url = `${import.meta.env.VITE_API_BASE_URL}users`
-
                 const Tag = clientType.value === 'IND' ? 'PIN' : 'TaxpayerId';
                 const request_body = `
                         <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
@@ -89,7 +87,7 @@ export default function useUser() {
                             </Body>
                         </Envelope>
                     `;
-                const response = await axios.post(url, request_body, {
+                const response = await axiosInstance.post('users', request_body, {
                     headers: {
                         'Content-Type': 'application/xml'
                     }
@@ -238,7 +236,7 @@ export default function useUser() {
 
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     try {
-                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data});
+                        await axiosInstance.post(`generate-link`, {}, {params: data});
                     } catch (e) {
                         console.log('Error generating IND consent link(s): ', e);
                     }
@@ -252,7 +250,7 @@ export default function useUser() {
 
                 for (let i = 0; i < _selectFormTypeLeg?.value.length; i++) {
                     try {
-                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data})
+                        await axiosInstance.post(`generate-link`, {}, {params: data})
                     } catch (e) {
                         console.log('Error generating LEG consent link(s): ', e);
                     }
@@ -288,9 +286,7 @@ export default function useUser() {
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     data["Name"] = _selectFormType.value[i];
                     try {
-                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
-                            withCredentials: true,
-                        });
+                        await axiosInstance.post(`consent-form`, data);
                     } catch (e) {
                         console.log('Error adding IND consent form(s): ', e);
                     }
@@ -305,9 +301,7 @@ export default function useUser() {
                 for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
                     data["Name"] = _selectFormTypeLeg.value[i];
                     try {
-                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
-                            withCredentials: true,
-                        });
+                        await axiosInstance.post(`consent-form`, data);
                     } catch (e) {
                         console.log('Error adding LEG consent form(s): ', e);
                     }
@@ -341,7 +335,7 @@ export default function useUser() {
             "IDNumber": visitLinkResponse?.value.idNum
         }
         try {
-            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}sms-verifications`, {
+            const response = await axiosInstance.post(`sms-verifications`, {
                 userData
             }, {
                 headers: {
@@ -349,9 +343,6 @@ export default function useUser() {
                 },
 
             });
-
-            console.log(response)
-
         } catch (error) {
             smsError.value = 'სერვერზე დაფიქსირდა შეცდომა!'
             console.error('Error visiting link:', error.status);
@@ -377,7 +368,7 @@ export default function useUser() {
 
         try {
             otpError.value = '';
-            await axios.post(`${import.meta.env.VITE_API_BASE_URL}verify-otp`, {
+            await axiosInstance.post(`verify-otp`, {
                 otp: code.value.join(''),
                 token: uuid
             });

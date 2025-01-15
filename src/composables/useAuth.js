@@ -2,6 +2,7 @@ import {ref} from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
 import cookies from "vue-cookies"
+import axiosInstance from "../interceptors/axios/index.js";
 
 export default function useAuth() {
     const user = ref({
@@ -30,14 +31,12 @@ export default function useAuth() {
 
         if (response.message === "Allow") {
             try {
-                await axios.post(`${import.meta.env.VITE_API_BASE_URL}login`, {
+                await axiosInstance.post(`login`, {
                     username: user.value.username,
                     user_id: response.user_id
-                }, {
-                    withCredentials: true
                 });
 
-               await router.push("/");
+                await router.push("/");
             } catch (e) {
                 authError.value = "სერვერზე დაფიქსირდა შეცდომა.";
             }
