@@ -37,7 +37,7 @@ export default function useAuth() {
                     withCredentials: true
                 });
 
-               // await router.push("/");
+               await router.push("/");
             } catch (e) {
                 authError.value = "სერვერზე დაფიქსირდა შეცდომა.";
             }

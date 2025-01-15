@@ -6,9 +6,6 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 
 onMounted(async () => {
-  if (!cookies.get("connect.sid")) {
-    await router.push("/login");
-  }
 });
 </script>
 
