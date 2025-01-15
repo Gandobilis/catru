@@ -1,6 +1,6 @@
 import {ref} from "vue";
 import {useRouter} from "vue-router";
-import axiosInstance from "../interceptors/axios/index.js";
+import axiosInstance from "/src/interceptors/axios/index.js";
 
 export default function useAuth() {
     const router = useRouter();
