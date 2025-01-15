@@ -22,6 +22,8 @@ const {
   disabled,
   success
 } = useUser();
+
+console.log(document.cookie)
 </script>
 
 
