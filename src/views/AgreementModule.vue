@@ -89,7 +89,7 @@ const {
         </button>
 
         <button v-else class="rounded-md pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli">
-          <span class="loading loading-spinner loading-sm"></span>
+          <span class="loading loading-spinner loading-sm"/>
         </button>
       </div>
 
@@ -101,10 +101,12 @@ const {
       <div v-if="clientType==='IND'" class="grid grid-cols-2 grid-rows-2 gap-3.5">
         <div :class="['flex flex-col gap-2' ]">
           <h2 class="text-sm font-medium">კლიენტის სახელი</h2>
+
           <input disabled
                  :value="user?.name"
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
+
           <input v-else
                  v-model="newUser.name"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
@@ -113,10 +115,12 @@ const {
 
         <div :class="['flex flex-col gap-2']">
           <h2 class="text-sm font-medium">კლიენტის გვარი</h2>
+
           <input disabled
                  :value="user?.surname"
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
+
           <input v-else
                  v-model="newUser.surname"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
@@ -125,10 +129,12 @@ const {
 
         <div :class="['flex flex-col gap-2']">
           <h2 class="text-sm font-medium">პირადი ნომერი</h2>
+
           <input disabled
                  :value="user?.personalNumber"
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="number" v-if="!editable">
+
           <input v-else
                  v-model="newUser.personalNumber"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
@@ -140,10 +146,12 @@ const {
 
         <div v-if="formType==='EL'" class="flex flex-col gap-2">
           <h2 class="text-sm font-medium">მობილური ტელეფონი</h2>
+
           <input disabled
                  :value="user?.phoneNumber"
                  class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                  type="text" v-if="!editable">
+
           <input v-else
                  v-model="newUser.phoneNumber"
                  class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
@@ -160,10 +168,12 @@ const {
         <div class="flex w-full gap-3.5">
           <div class="flex w-1/2 flex-col gap-2">
             <h2 class="text-sm font-medium">კლიენტის დასახელება</h2>
+
             <input disabled
                    :value="user?.clientName"
                    class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="text" v-if="!editable">
+
             <input v-else
                    v-model="_newUser.clientName"
                    class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
@@ -172,10 +182,12 @@ const {
 
           <div class="flex w-1/2 flex-col gap-2">
             <h2 class="text-sm font-medium">საიდენტიფიკაციო ნომერი</h2>
+
             <input disabled
                    :value="user?.taxNumber"
                    class="rounded-md p-2 text-xs placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
                    type="number" v-if="!editable">
+
             <input v-else
                    v-model="_newUser.taxNumber"
                    class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
@@ -189,29 +201,32 @@ const {
         <div class="grid grid-cols-2 gap-4">
           <div class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფლებამოსილი პირი (უფ.პ)</h2>
+
             <input
-                   v-model="_newUser.legPerson"
-                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
-                   type="text">
+                v-model="_newUser.legPerson"
+                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                type="text">
           </div>
 
           <div class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფ.პ-ს პირადი ნომერი</h2>
+
             <input
-                   v-model="_newUser.legPersonTax"
-                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
-                   type="text">
+                v-model="_newUser.legPersonTax"
+                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                type="text">
 
           </div>
 
           <div v-if="formType==='EL'" class="flex flex-col gap-2">
             <h2 class="text-sm font-medium">უფ.პ-ს მობილური</h2>
+
             <input
-                   v-model="_newUser.phoneNumber"
-                   class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
-                   type="number"
-                   :maxlength="9"
-                   @input="_newUser.phoneNumber = _newUser.phoneNumber?.toString().slice(0, 9)">
+                v-model="_newUser.phoneNumber"
+                class="rounded-md border p-2 text-xs border-placeholder-grey placeholder-placeholder-grey focus:outline-none disabled:text-placeholder-grey disabled:bg-disabled disabled:cursor-not-allowed"
+                type="number"
+                :maxlength="9"
+                @input="_newUser.phoneNumber = _newUser.phoneNumber?.toString().slice(0, 9)">
           </div>
         </div>
       </div>
@@ -226,16 +241,19 @@ const {
       <form class="flex items-center font-medium gap-x-[225px]">
         <div class="flex items-center gap-1">
           <input type="radio" name="GE-EN" value="GE" v-model="formLang" checked/>
+
           <p class="text-xs">ქართული</p>
         </div>
+
         <div class="flex items-center gap-1">
           <input type="radio" name="GE-EN" value="EN" v-model="formLang"/>
+
           <p class="text-xs">ინგლისური</p>
         </div>
       </form>
     </div>
-    <hr class="text-placeholder-grey"/>
 
+    <hr class="text-placeholder-grey"/>
 
     <div class="flex flex-col gap-3.5 py-3.5">
       <h2 class="text-sm">აირჩიეთ თანხმობის ფორმა</h2>
@@ -243,14 +261,19 @@ const {
       <form v-if="clientType==='IND'" class="flex items-center justify-between font-medium">
         <div class="flex items-center gap-1">
           <input type="radio" name="CF_CB_RS" value="CF_CB_REC" v-model="selectFormType" checked/>
+
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიღება</p>
         </div>
+
         <div class="flex items-center gap-1">
           <input type="radio" name="CF_CB_RS" value="CF_CB_SEN" v-model="selectFormType"/>
+
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიწოდება</p>
         </div>
+
         <div class="flex items-center gap-1">
           <input type="radio" name="CF_CB_RS" value="CF_RS_REC" v-model="selectFormType"/>
+
           <p class="whitespace-nowrap text-xs">შემოსავლების სამსახური</p>
         </div>
       </form>
@@ -258,16 +281,16 @@ const {
       <form v-if="clientType==='LEG'" class="flex items-center font-medium gap-x-[145px]">
         <div class="flex items-center gap-1">
           <input type="radio" name="CF_CB_RS" value="CF_CB_REC" v-model="selectFormTypeLeg" checked/>
+
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიღება</p>
         </div>
+
         <div class="flex items-center gap-1">
           <input type="radio" name="CF_CB_RS" value="CF_CB_SEN" v-model="selectFormTypeLeg"/>
+
           <p class="whitespace-nowrap text-xs">საკრ. ბიურო - მიწოდება</p>
         </div>
-
       </form>
-
-
     </div>
 
     <hr class="text-placeholder-grey"/>
@@ -275,10 +298,9 @@ const {
     <div class="flex flex-col py-4 gap-3.5 h-[78px]">
       <span v-if="clientType==='IND'" class="text-xs font-medium" v-for="(type, index) in _selectFormType" :key="index"
             v-text="type"/>
-      <span v-else class="text-xs font-medium" v-for="(type, index) in _selectFormTypeLeg"
-            :key="index * 5"
-            v-text="type"/>
 
+      <span v-else class="text-xs font-medium" v-for="(type, index) in _selectFormTypeLeg"
+            :key="index * 5" v-text="type"/>
     </div>
 
     <hr class="text-placeholder-grey"/>
@@ -286,7 +308,7 @@ const {
     <div class="flex justify-between items-center pt-3.5 gap-x-3.5">
       <p v-if="success" class="text-primary-blue font-mtavruli text-xs">შეტყობინება: <span
           class="text-custom-green font-mtavruli" v-text="success"/></p>
-      <div v-else></div>
+      <div v-else/>
 
       <div class="flex gap-x-3.5">
         <button
@@ -294,19 +316,16 @@ const {
           გაუქმება
         </button>
 
-
         <button v-if="formType === 'MT'"
                 class="send-print-button"
                 :disabled="disabled"
                 @click="handleClick"
-                v-text="'ბეჭდვა'"
-        />
-          <button v-else
-              class="send-print-button"
-              :disabled="disabled"
-              @click="handleClick"
-              v-text="'გაგზავნა'"
-          />
+                v-text="'ბეჭდვა'"/>
+        <button v-else
+                class="send-print-button"
+                :disabled="disabled"
+                @click="handleClick"
+                v-text="'გაგზავნა'"/>
       </div>
     </div>
   </div>
