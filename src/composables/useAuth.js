@@ -1,6 +1,7 @@
 import {ref} from "vue";
 import axios from "axios";
 import {useRouter} from "vue-router";
+import cookies from "vue-cookies"
 
 export default function useAuth() {
     const user = ref({
@@ -12,6 +13,12 @@ export default function useAuth() {
 
     const login = async () => {
         authError.value = null;
+
+        if (!user.value.username || !user.value.password) {
+            authError.value = "გთხოვთ შეავსოთ მონაცემები.";
+            return;
+        }
+
         // ავტორიზაციის რექვესთი
 
         const response = {
@@ -19,18 +26,18 @@ export default function useAuth() {
             user_id: 1,
         };
 
+        cookies.set("user_id", response.user_id);
+
         if (response.message === "Allow") {
             try {
-                const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}login`, {
+                await axios.post(`${import.meta.env.VITE_API_BASE_URL}login`, {
                     username: user.value.username,
                     user_id: response.user_id
                 }, {
                     withCredentials: true
                 });
 
-                console.log(res.headers['set-cookie'])
-
-                router.push("/");
+               // await router.push("/");
             } catch (e) {
                 authError.value = "სერვერზე დაფიქსირდა შეცდომა.";
             }

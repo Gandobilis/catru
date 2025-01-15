@@ -2,6 +2,7 @@ import {computed, ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {xml2json} from 'xml-js';
 import axios from "axios";
+import cookies from "vue-cookies";
 
 export default function useUser() {
     const router = useRouter();
@@ -268,7 +269,6 @@ export default function useUser() {
 
             let data = {
                 FormType: formType.value,
-                SessionID: 1000001, // შესაცვლელია
                 TemplateID: 1, // შესაცვლელია
                 ClientType: clientType.value,
                 ReceiptDate: ReceiptDate.toISOString(),
@@ -288,7 +288,9 @@ export default function useUser() {
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     data["Name"] = _selectFormType.value[i];
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data);
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
+                            withCredentials: true,
+                        });
                     } catch (e) {
                         console.log('Error adding IND consent form(s): ', e);
                     }
@@ -303,7 +305,9 @@ export default function useUser() {
                 for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
                     data["Name"] = _selectFormTypeLeg.value[i];
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data);
+                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
+                            withCredentials: true,
+                        });
                     } catch (e) {
                         console.log('Error adding LEG consent form(s): ', e);
                     }
@@ -340,7 +344,6 @@ export default function useUser() {
             const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}sms-verifications`, {
                 userData
             }, {
-
                 headers: {
                     "ngrok-skip-browser-warning": "69420"
                 },
