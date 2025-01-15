@@ -223,7 +223,7 @@ export default function useUser() {
 
     const isChecked = ref(false);
 
-    const handleClick = () => {
+    const handleClick = async () => {
         if (formType.value === 'EL') {
             // ესემესის გაგზავნა
             const data = {
@@ -238,7 +238,7 @@ export default function useUser() {
 
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data});
+                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data});
                     } catch (e) {
                         console.log('Error generating IND consent link(s): ', e);
                     }
@@ -252,7 +252,7 @@ export default function useUser() {
 
                 for (let i = 0; i < _selectFormTypeLeg?.value.length; i++) {
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data})
+                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}generate-link`, {}, {params: data})
                     } catch (e) {
                         console.log('Error generating LEG consent link(s): ', e);
                     }
@@ -288,7 +288,7 @@ export default function useUser() {
                 for (let i = 0; i < _selectFormType.value.length; i++) {
                     data["Name"] = _selectFormType.value[i];
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
+                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
                             withCredentials: true,
                         });
                     } catch (e) {
@@ -305,7 +305,7 @@ export default function useUser() {
                 for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
                     data["Name"] = _selectFormTypeLeg.value[i];
                     try {
-                        axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
+                        await axios.post(`${import.meta.env.VITE_API_BASE_URL}consent-form`, data, {
                             withCredentials: true,
                         });
                     } catch (e) {

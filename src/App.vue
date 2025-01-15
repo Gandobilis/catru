@@ -6,6 +6,7 @@ import {useRouter} from "vue-router";
 const router = useRouter();
 
 onMounted(async () => {
+
 });
 </script>
 
