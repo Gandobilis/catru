@@ -19,10 +19,9 @@ const {
   editable,
   handleClick,
   disabled,
-  success
+  success,
 } = useUser();
 </script>
-
 
 <template>
   <div class="flex flex-col rounded-lg border shadow-xl p-3.5 w-[600px] border-stroke-grey">

@@ -1,5 +1,5 @@
 <script setup>
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useRoute, useRouter} from "vue-router";
 import useUser from "/src/composables/useUser.js";
 
@@ -18,7 +18,9 @@ const checkFailed = async () => {
   }
 };
 
-checkFailed();
+onMounted(async () => {
+  await checkFailed();
+})
 
 // const consentText = import.meta.env.VITE_CONSENT_TEXT.replace('FULL_NAME', '<span class="text-primary-blue font-mrglovani">FULL NAME</span>')
 //    .replace('ID_NUMBER', '<span class="text-primary-blue font-mrglovani">ID NUMBER</span>');

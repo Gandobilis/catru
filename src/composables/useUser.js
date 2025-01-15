@@ -228,86 +228,119 @@ export default function useUser() {
                 lang: formLang.value,
             }
 
+            const ReceiptDate = new Date();
+            const Deadline = 30;
+            const ValidityDate = new Date(ReceiptDate);
+            ValidityDate.setDate(ValidityDate.getDate() + Deadline);
+            const consentData = {
+                FormType: formType.value,
+                TemplateID: 1,
+                ClientType: clientType.value,
+                ReceiptDate: ReceiptDate.toISOString(),
+                Deadline: Deadline,
+                ValidityDate: ValidityDate.toISOString(),
+                Status: "აქტიური",
+                WithdrawalDate: new Date(),
+                Comment: "კლიენტის მოთხოვნით",
+                ClientName: `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`,
+                IDNumber: user.value ? user.value.personalNumber : newUser.value.personalNumber,
+                AuthorizedName: "",
+                AuthorizedIDNumber: "",
+                TemplateCode: selectFormType.value,
+            }
+
             if (clientType.value === 'IND') {
                 data["fullName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
                 data["idNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
                 data["consentForm"] = selectFormType.value.split("_")[1];
                 data["phoneNum"] = user.value ? user.value.phoneNumber : newUser.value.phoneNumber;
 
-                for (let i = 0; i < _selectFormType.value.length; i++) {
+                try {
+                    await axiosInstance.post('generate-link', {}, {params: data});
+
+                    consentData["Name"] = _selectFormType.value;
                     try {
-                        await axiosInstance.post(`generate-link`, {}, {params: data});
+                        await axiosInstance.post(`consent-form`, consentData);
+                        success.value = 'თანხმობის ფორმა დაიბეჭდა წარმატებით'
                     } catch (e) {
-                        console.log('Error generating IND consent link(s): ', e);
+                        success.value = 'თანხმობის ფორმების გაიგზავნისას მოხდა შეცდომა.'
                     }
+                } catch (e) {
+                    success.value = 'თანხმობის ფორმა გაიგზავნისას მოხდა შეცდომა.';
                 }
-                success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
             } else if (clientType.value === 'LEG') {
                 data["fullName"] = user.value ? user.value.clientName : _newUser.value.clientName;
                 data["idNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
                 data["consentForm"] = selectFormTypeLeg.value.split("_")[1];
                 data["phoneNum"] = user.value ? user.value.phoneNumber : _newUser.value.phoneNumber;
 
-                for (let i = 0; i < _selectFormTypeLeg?.value.length; i++) {
-                    try {
-                        await axiosInstance.post(`generate-link`, {}, {params: data})
-                    } catch (e) {
-                        console.log('Error generating LEG consent link(s): ', e);
-                    }
-                }
+                try {
+                    await axiosInstance.post(`generate-link`, {}, {params: data})
 
-                success.value = 'თანხმობის ფორმა გაიგზავნა წარმატებით'
+                    consentData["Name"] = _selectFormTypeLeg.value;
+                    try {
+                        await axiosInstance.post(`consent-form`, consentData);
+                        success.value = 'თანხმობის ფორმა დაიბეჭდა წარმატებით'
+                    } catch (e) {
+                        success.value = 'თანხმობის ფორმების გაიგზავნისას მოხდა შეცდომა.'
+                    }
+                } catch (e) {
+                    success.value = 'თანხმობის ფორმა გაიგზავნისას მოხდა შეცდომა.';
+                }
             }
         } else if (formType.value === 'MT') {
             // ბეჭდვა
             const ReceiptDate = new Date();
-            const Deadline = 30; // შესაცვლელია
+            const Deadline = 30;
             const ValidityDate = new Date(ReceiptDate);
-            ValidityDate.setDate(ValidityDate.getDate() + 30);
+            ValidityDate.setDate(ValidityDate.getDate() + Deadline);
 
-            let data = {
-                FormType: formType.value,
-                TemplateID: 1, // შესაცვლელია
-                ClientType: clientType.value,
-                ReceiptDate: ReceiptDate.toISOString(),
-                Deadline: Deadline,
-                ValidityDate: ReceiptDate.toISOString(),
-                Status: "აქტიური", // ნაგულისხმევი
-                WithdrawalDate: new Date(), // კითხვა
-                Comment: "კლიენტის მოთხოვნით", // nullable
-            }
+            let data = [];
+
             if (clientType.value === 'IND') {
-                data["ClientName"] = `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`;
-                data["IDNumber"] = user.value ? user.value.personalNumber : newUser.value.personalNumber;
-                data["AuthorizedName"] = "";
-                data["AuthorizedIDNumber"] = "";
-                data["TemplateCode"] = selectFormType.value;
-
-                for (let i = 0; i < _selectFormType.value.length; i++) {
-                    data["Name"] = _selectFormType.value[i];
-                    try {
-                        await axiosInstance.post(`consent-form`, data);
-                    } catch (e) {
-                        console.log('Error adding IND consent form(s): ', e);
-                    }
-                }
+                data = {
+                    FormType: formType.value,
+                    TemplateID: 1,
+                    ClientType: clientType.value,
+                    ReceiptDate: ReceiptDate.toISOString(),
+                    Deadline: Deadline,
+                    ValidityDate: ValidityDate.toISOString(),
+                    Status: "აქტიური",
+                    WithdrawalDate: new Date(),
+                    Comment: "კლიენტის მოთხოვნით",
+                    ClientName: `${user.value ? user.value.name : newUser.value.name} ${user.value ? user.value.surname : newUser.value.surname}`,
+                    IDNumber: user.value ? user.value.personalNumber : newUser.value.personalNumber,
+                    AuthorizedName: "",
+                    AuthorizedIDNumber: "",
+                    TemplateCode: selectFormType.value,
+                    Name: _selectFormType.value,
+                };
             } else if (clientType.value === 'LEG') {
-                data["ClientName"] = user.value ? user.value.clientName : _newUser.value.clientName;
-                data["IDNumber"] = user.value ? user.value.taxNumber : _newUser.value.taxNumber;
-                data["AuthorizedName"] = user.value ? user.value.legPerson : _newUser.value.legPerson;
-                data["AuthorizedIDNumber"] = user.value ? user.value.legPersonTax : _newUser.value.legPersonTax;
-                data["TemplateCode"] = selectFormTypeLeg.value;
-
-                for (let i = 0; i < _selectFormTypeLeg.value.length; i++) {
-                    data["Name"] = _selectFormTypeLeg.value[i];
-                    try {
-                        await axiosInstance.post(`consent-form`, data);
-                    } catch (e) {
-                        console.log('Error adding LEG consent form(s): ', e);
-                    }
-                }
+                data = {
+                    FormType: formType.value,
+                    TemplateID: 1,
+                    ClientType: clientType.value,
+                    ReceiptDate: ReceiptDate.toISOString(),
+                    Deadline: Deadline,
+                    ValidityDate: ValidityDate.toISOString(),
+                    Status: "აქტიური",
+                    WithdrawalDate: new Date(),
+                    Comment: "კლიენტის მოთხოვნით",
+                    ClientName: user.value ? user.value.clientName : _newUser.value.clientName,
+                    IDNumber: user.value ? user.value.taxNumber : _newUser.value.taxNumber,
+                    AuthorizedName: user.value ? user.value.legPerson : _newUser.value.legPerson,
+                    AuthorizedIDNumber: user.value ? user.value.legPersonTax : _newUser.value.legPersonTax,
+                    TemplateCode: selectFormTypeLeg.value,
+                    Name: _selectFormTypeLeg.value,
+                };
             }
-            success.value = 'თანხმობის ფორმა დაიბეჭდა წარმატებით'
+
+            try {
+                await axiosInstance.post(`consent-form`, data);
+                success.value = 'თანხმობის ფორმა დაიბეჭდა წარმატებით'
+            } catch (e) {
+                success.value = 'თანხმობის ფორმების დაბეჭდვისას მოხდა შეცდომა.'
+            }
         }
     };
 
@@ -404,7 +437,7 @@ export default function useUser() {
     const visitLink = async (uuid) => {
 
         try {
-            const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}visit-link/${uuid}`, {
+            const response = await axiosInstance.get(`visit-link/${uuid}`, {
                 headers: {
                     "ngrok-skip-browser-warning": "69420"
                 }
