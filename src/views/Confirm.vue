@@ -1,33 +1,38 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
-import useUser from "../composables/useUser.js";
-import MobileIcon from "../assets/icons/mobileIcon.vue";
+import {ref, computed, onMounted} from 'vue';
+import useUser from "/src/composables/useUser.js";
 import {useRoute, useRouter} from "vue-router";
+import MobileIcon from "/src/assets/icons/mobileIcon.vue";
 
-const { continueAction, isContinueEnabled, code, startCountdown, countdown, resendCode, isResendEnabled, otpError, failed, visitLink } = useUser();
-const router = useRouter();  // Initialize router
+const {
+  continueAction,
+  isContinueEnabled,
+  code,
+  startCountdown,
+  countdown,
+  resendCode,
+  isResendEnabled,
+  otpError,
+  failed,
+  visitLink,
+} = useUser();
+
+const router = useRouter();
 const pageLoaded = ref(false);
 const route = useRoute();
 
 const uuid = route.params.uuid;
 
-
 const checkFailed = async () => {
   await visitLink(uuid);
-  console.log(uuid)
   if (failed.value) {
-    await router.push('/not-found');  // Redirect to not-found page
+    await router.push('/not-found');
   } else {
     pageLoaded.value = true;
   }
 };
 
-checkFailed()
-onMounted(() => {
-  startCountdown();
-});
-
-
+checkFailed();
 
 const handleInput = (event, index) => {
   let value = event.target.value;
@@ -51,7 +56,6 @@ const handleInput = (event, index) => {
   event.target.value = code.value[index];
 };
 
-// Function to handle backspace key
 const handleBackspace = (event, index) => {
   if (event.key === 'Backspace' && code.value[index] === '') {
     if (index > 0) {
@@ -61,16 +65,20 @@ const handleBackspace = (event, index) => {
   }
 };
 
-// Computed property for resend button background
 const resendButtonFill = computed(() => {
   const percentage = ((60 - countdown.value) / 60) * 100;
   return `linear-gradient(to right, #1C5285 ${percentage}%, #D0D5DD ${percentage}%)`;
+});
+
+onMounted(() => {
+  startCountdown();
 });
 </script>
 
 <template>
   <div class="w-full flex flex-col gap-12 items-center">
-    <mobile-icon class="-mb-5" />
+    <mobile-icon class="-mb-5"/>
+
     <p class="text-primary-blue text-center md:text-3xl text-2xl font-mtavruli">
       გთხოვთ შეიყვანეთ ერთჯერადი დადასტურების კოდი
     </p>
@@ -78,6 +86,7 @@ const resendButtonFill = computed(() => {
     <p class="text-placeholder-grey md:text-lg text-sm font-mrglovani">
       ერთჯერადი დადასტურების კოდი გამოგზავნილია თქვენს მობილურ ტელეფონზე +995 59* ** ** *0
     </p>
+
     <p class="md:text-lg text-sm font-mrglovani text-primary-blue">
       {{ ` ${String(Math.floor(countdown / 60)).padStart(2, '0')}:${String(countdown % 60).padStart(2, '0')}` }}
     </p>
@@ -103,8 +112,7 @@ const resendButtonFill = computed(() => {
           class="rounded-xl p-3 md:text-lg text-sm text-white bg-primary-blue font-mtavruli hover:transition"
           :style="{ background: resendButtonFill }"
           @click="resendCode"
-          :disabled="!isResendEnabled"
-      >
+          :disabled="!isResendEnabled">
         თავიდან გაგზავნა
       </button>
 
@@ -112,8 +120,7 @@ const resendButtonFill = computed(() => {
           class="rounded-xl p-3 md:text-lg text-sm text-white bg-primary-blue font-mtavruli hover:transition"
           :class="isContinueEnabled ? 'bg-primary-blue' : 'bg-stroke-grey'"
           :disabled="!isContinueEnabled"
-          @click="continueAction(uuid)"
-      >
+          @click="continueAction(uuid)">
         ბანკში გაგზავნა
       </button>
     </div>
@@ -124,6 +131,7 @@ const resendButtonFill = computed(() => {
 input {
   outline: none;
 }
+
 button:disabled {
   cursor: not-allowed;
 }
