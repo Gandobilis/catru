@@ -54,7 +54,15 @@ onMounted(async () => {
   await getData();
 });
 
+const _status = ref();
 const comment = ref('');
+const openCommentModal = () => {
+  document.getElementById('my_modal_1').showModal();
+}
+
+const closeCommentModal = () => {
+  document.getElementById('my_modal_1').close();
+}
 </script>
 
 <template>
@@ -171,10 +179,10 @@ const comment = ref('');
           <button @click="">ბეჭდვა</button>
         </td>
         <td class="border border-gray-300 px-4 py-2">
-          <button @click="">გამოთხოვა</button>
+          <button @click="_status = 'გამოთხოვა';  openCommentModal()">გამოთხოვა</button>
         </td>
         <td class="border border-gray-300 px-4 py-2">
-          <button @click="">გაუქმება</button>
+          <button @click="_status = 'გაუქმება'; openCommentModal()">გაუქმება</button>
         </td>
       </tr>
       </tbody>
@@ -198,4 +206,22 @@ const comment = ref('');
       </button>
     </div>
   </div>
+
+  <dialog id="my_modal_1" class="modal">
+    <div class="modal-box">
+      <p class="py-4">გთხოვთ შეიყვანოთ მიზეზი</p>
+
+      <textarea v-model="comment"
+                style="border-color: lightgray"
+                placeholder="კომენტარი"
+                class="resize-none border rounded-md p-2.5 w-full h-24 focus:outline-none"></textarea>
+
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn">დახურვა</button>
+          <button class="btn ml-2.5 btn-neutral" v-text="_status"/>
+        </form>
+      </div>
+    </div>
+  </dialog>
 </template>
