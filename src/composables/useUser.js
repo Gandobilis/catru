@@ -96,8 +96,6 @@ export default function useUser() {
 
 
                 const customer = data["Envelope"]["Body"]["ListCustomersResponse"]["Result"]["Customer"]
-                // console.log(data)
-                // console.log(customer)
 
                 if (customer["Status"]["_text"] === 'Cancelled') {
                     notification.value = 'აღნიშნული ნომრით კლიენტი გაუქმებულია.';
@@ -162,26 +160,26 @@ export default function useUser() {
             if (editable.value) {
                 const user = newUser.value;
                 if (formType.value === 'MT') {
-                    return !user.name || !user.surname || !user.personalNumber
+                    return !user.name || !user.surname || !user.personalNumber || user.personalNumber.length !== 11;
                 } else {
-                    return !user.name || !user.surname || !user.personalNumber || !user.phoneNumber
+                    return !user.name || !user.surname || !user.personalNumber || !user.phoneNumber || user.phoneNumber.length !== 9;
                 }
             } else {
                 return !user.value
             }
-        } else {
+        } else if (clientType.value === 'LEG') {
             const _user = _newUser.value;
             if (editable.value) {
                 if (formType.value === 'MT') {
-                    return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax
+                    return !_user.clientName || !_user.taxNumber || _user.taxNumber.length !== 9 || !_user.legPerson || !_user.legPersonTax
                 } else {
-                    return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber;
+                    return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber || _user.phoneNumber.length !== 9;
                 }
             } else {
                 if (formType.value === 'MT') {
                     return !user.value || !_user.legPerson || !_user.legPersonTax
                 } else {
-                    return !user.value || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber;
+                    return !user.value || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber || _user.phoneNumber.length !== 9;
                 }
             }
         }
