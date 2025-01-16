@@ -53,6 +53,8 @@ const changePage = async (page) => {
 onMounted(async () => {
   await getData();
 });
+
+const comment = ref('');
 </script>
 
 <template>
@@ -169,16 +171,16 @@ onMounted(async () => {
           <button @click="">ბეჭდვა</button>
         </td>
         <td class="border border-gray-300 px-4 py-2">
-          <button  @click="">გამოთხოვა</button>
+          <button @click="">გამოთხოვა</button>
         </td>
         <td class="border border-gray-300 px-4 py-2">
-          <button  @click="">გაუქმება</button>
+          <button @click="">გაუქმება</button>
         </td>
       </tr>
       </tbody>
     </table>
 
-    <div class="mt-6 flex justify-center gap-4">
+    <div class="mt-6 flex justify-center gap-4 fixed bottom-0 w-screen bg-white p-4 items-center gap-x-10">
       <button
           @click="changePage(currentPage - 1)"
           :disabled="currentPage === 1"
