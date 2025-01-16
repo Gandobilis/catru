@@ -101,11 +101,16 @@ onMounted(async () => {
             class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
         />
 
-        <input
+        <select
             v-model="status"
-            placeholder="სტატუსი"
-            class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
-        />
+            class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey focus:outline-none">
+          <option value="" disabled selected>სტატუსი</option>
+          <option value="მოქმედი">მოქმედი</option>
+          <option value="უარყოფილი">უარყოფილი</option>
+          <option value="გამოყენებული">გამოყენებული</option>
+          <option value="ვადაგასული">ვადაგასული</option>
+          <option value="გაუქმებული">გაუქმებული</option>
+        </select>
 
         <input
             v-model="receiptDate"
@@ -142,6 +147,9 @@ onMounted(async () => {
         <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;">სტატუსი</th>
         <th class="border border-gray-300 px-4 py-2" style="width: 180px; height: 50px;">თანხმობის მიღების თარიღი</th>
         <th class="border border-gray-300 px-4 py-2" style="width: 200px; height: 50px;">მოქმედების ვადა</th>
+        <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;"></th>
+        <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;"></th>
+        <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;"></th>
       </tr>
       </thead>
 
@@ -149,7 +157,7 @@ onMounted(async () => {
       <tr v-for="user in data" :key="user.id">
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.ClientName }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.consentTemplate.TemplateCode }}</td>
-        <td class="border border-gray-300 px-4 py-2" style="height: 50px;">Row 1</td>
+        <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.consentTemplate.Version }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.TemplateID }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.FormType }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.AuthorizedName }}</td>
@@ -157,10 +165,18 @@ onMounted(async () => {
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.Status }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ formatDate(user?.ReceiptDate) }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ formatDate(user?.ValidityDate) }}</td>
+        <td class="border border-gray-300 px-4 py-2">
+          <button @click="">ბეჭდვა</button>
+        </td>
+        <td class="border border-gray-300 px-4 py-2">
+          <button  @click="">გამოთხოვა</button>
+        </td>
+        <td class="border border-gray-300 px-4 py-2">
+          <button  @click="">გაუქმება</button>
+        </td>
       </tr>
       </tbody>
     </table>
-
 
     <div class="mt-6 flex justify-center gap-4">
       <button
