@@ -114,11 +114,13 @@ onMounted(async () => {
             class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none text-gray-500"
         />
 
-        <input
+        <select
             v-model="formType"
-            placeholder="თანხმობის ტიპი"
-            class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none"
-        />
+            class="rounded-xl border p-3 md:text-lg w-96 text-sm border-placeholder-grey placeholder-placeholder-grey focus:outline-none">
+          <option disabled value="">თანხმობის ტიპი</option>
+          <option value="MT">MT - მატერიალური</option>
+          <option value="EL">EL - ელექტრონული</option>
+        </select>
       </div>
     </div>
 
@@ -134,8 +136,9 @@ onMounted(async () => {
         <th class="border border-gray-300 px-4 py-2" style="width: 180px; height: 50px;">მაინიცირებელი მომხმარებლის
           მონაცემები
         </th>
-        <th class="border border-gray-300 px-4 py-2" style="width: 150px; height: 50px;">დადასტურების თარიღი</th>
-        <th class="border border-gray-300 px-4 py-2" style="width: 150px; height: 50px;">უარყოფის თარიღი</th>
+        <th class="border border-gray-300 px-4 py-2" style="width: 150px; height: 50px;">დადასტურების / უარყოფის თარიღი
+          და დრო
+        </th>
         <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;">სტატუსი</th>
         <th class="border border-gray-300 px-4 py-2" style="width: 180px; height: 50px;">თანხმობის მიღების თარიღი</th>
         <th class="border border-gray-300 px-4 py-2" style="width: 200px; height: 50px;">მოქმედების ვადა</th>
@@ -150,7 +153,6 @@ onMounted(async () => {
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.TemplateID }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.FormType }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.AuthorizedName }}</td>
-        <td class="border border-gray-300 px-4 py-2" style="height: 50px;">Row 1</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">Row 1</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ user?.Status }}</td>
         <td class="border border-gray-300 px-4 py-2" style="height: 50px;">{{ formatDate(user?.ReceiptDate) }}</td>

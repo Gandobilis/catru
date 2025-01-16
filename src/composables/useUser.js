@@ -162,7 +162,7 @@ export default function useUser() {
                 if (formType.value === 'MT') {
                     return !user.name || !user.surname || !user.personalNumber || user.personalNumber.length !== 11;
                 } else if (formType.value === 'EL') {
-                    return !user.name || !user.surname || !user.personalNumber || !user.phoneNumber || user.phoneNumber.length !== 9;
+                    return !user.name || !user.surname || !user.personalNumber || user.personalNumber.length !== 11 || !user.phoneNumber || user.phoneNumber.length !== 9;
                 }
             } else {
                 return !user.value
@@ -173,7 +173,7 @@ export default function useUser() {
                 if (formType.value === 'MT') {
                     return !_user.clientName || !_user.taxNumber || _user.taxNumber.length !== 9 || !_user.legPerson || !_user.legPersonTax
                 } else if (formType.value === 'EL') {
-                    return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber || _user.phoneNumber.length !== 9;
+                    return !_user.clientName || !_user.taxNumber || _user.taxNumber.length !== 9 || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber || _user.phoneNumber.length !== 9;
                 }
             } else {
                 if (formType.value === 'MT') {
