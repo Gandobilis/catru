@@ -110,7 +110,7 @@ onMounted(() => {
       <button
           class="rounded-xl p-3 md:text-lg text-sm text-white bg-primary-blue font-mtavruli hover:transition"
           :style="{ background: resendButtonFill }"
-          @click="resendCode"
+          @click="resendCode(uuid)"
           :disabled="!isResendEnabled">
         თავიდან გაგზავნა
       </button>

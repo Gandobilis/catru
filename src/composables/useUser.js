@@ -356,7 +356,6 @@ export default function useUser() {
     const verifySms = async () => {
         await getUserIp()
         let userData = {
-            "SessionID": 523352523,
             "SenderID": 23535253,
             "MobileNumber": visitLinkResponse?.value.phone,
             "SentTemplateID": 333,
@@ -393,10 +392,6 @@ export default function useUser() {
     const code = ref(['', '', '', '']);
 
     const continueAction = async (uuid) => {
-        if (isContinueEnabled.value) {
-            console.log('დადასტურება button pressed.');
-        }
-
         try {
             otpError.value = '';
             await axiosInstance.post(`verify-otp`, {
@@ -409,18 +404,33 @@ export default function useUser() {
             console.log("Error while verifying opt: ", e);
         }
     };
+
     const isResendEnabled = ref(false);
-    const resendCode = () => {
-        if (isResendEnabled.value) {
-            startCountdown();
-            // Add logic here to resend the verification code if necessary
-            console.log('Resending code...');
+
+    const resendCode = async () => {
+        await getUserIp()
+        try {
+            otpError.value = '';
+            await axiosInstance.post(`resend-otp`, {
+                "SenderID": 23535253,
+                "MobileNumber": visitLinkResponse?.value.phone,
+                "SentTemplateID": 333,
+                "TemplateCode": clientType.value === "IND" ? selectFormType.value : selectFormTypeLeg.value,
+                "SenderIP": userIp.value,
+                "relID": visitLinkResponse?.value.rel_id,
+                "IDNumber": visitLinkResponse?.value.idNum,
+            });
+            if (isResendEnabled.value) {
+                startCountdown();
+            }
+        } catch (e) {
+            otpError.value = 'შეცდომა კოდის გაგზავნისას!';
         }
     };
     const countdown = ref(60);
 
     const startCountdown = () => {
-        countdown.value = 60;
+        countdown.value = 5;
         isResendEnabled.value = false;
         const interval = setInterval(() => {
             countdown.value--;
@@ -433,7 +443,6 @@ export default function useUser() {
     const failed = ref(false)
     const visitLinkResponse = ref()
     const visitLink = async (uuid) => {
-
         try {
             const response = await axiosInstance.get(`visit-link/${uuid}`, {
                 headers: {
