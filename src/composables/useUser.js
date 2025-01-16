@@ -161,7 +161,7 @@ export default function useUser() {
                 const user = newUser.value;
                 if (formType.value === 'MT') {
                     return !user.name || !user.surname || !user.personalNumber || user.personalNumber.length !== 11;
-                } else {
+                } else if (formType.value === 'EL') {
                     return !user.name || !user.surname || !user.personalNumber || !user.phoneNumber || user.phoneNumber.length !== 9;
                 }
             } else {
@@ -172,13 +172,13 @@ export default function useUser() {
             if (editable.value) {
                 if (formType.value === 'MT') {
                     return !_user.clientName || !_user.taxNumber || _user.taxNumber.length !== 9 || !_user.legPerson || !_user.legPersonTax
-                } else {
+                } else if (formType.value === 'EL') {
                     return !_user.clientName || !_user.taxNumber || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber || _user.phoneNumber.length !== 9;
                 }
             } else {
                 if (formType.value === 'MT') {
                     return !user.value || !_user.legPerson || !_user.legPersonTax
-                } else {
+                } else if (formType.value === 'EL') {
                     return !user.value || !_user.legPerson || !_user.legPersonTax || !_user.phoneNumber || _user.phoneNumber.length !== 9;
                 }
             }
