@@ -32,7 +32,7 @@ const routes = [
     {
         path: '/filter',
         name: 'Filter',
-        meta: {requiresAuth: false},
+        meta: {requiresAuth: true},
         component: () => import('/src/views/Filters.vue'),
     },
     {
