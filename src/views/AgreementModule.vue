@@ -20,6 +20,7 @@ const {
   handleClick,
   disabled,
   success,
+  getUser1
 } = useUser();
 </script>
 
@@ -82,7 +83,7 @@ const {
 
         <button
             class="rounded-md pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli hover:bg-primary-button-hover hover:transition disabled:text-placeholder-grey disabled:bg-stroke-grey disabled:cursor-not-allowed"
-            @click="getUser"
+            @click="getUser1"
             :disabled="!personalOrTaxNumber"
             v-if="!loading">შემოწმება
         </button>

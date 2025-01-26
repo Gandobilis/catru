@@ -6,8 +6,8 @@ export default function useAuth() {
     const router = useRouter();
 
     const user = ref({
-        username: null,
-        password: null,
+        username: '',
+        password: '',
     });
 
     const authError = ref();

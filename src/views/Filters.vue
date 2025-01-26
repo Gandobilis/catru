@@ -159,7 +159,6 @@ const closeCommentModal = () => {
         <th class="border border-gray-300 px-4 py-2" style="width: 200px; height: 50px;">მოქმედების ვადა</th>
         <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;"></th>
         <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;"></th>
-        <th class="border border-gray-300 px-4 py-2" style="width: 120px; height: 50px;"></th>
       </tr>
       </thead>
 
@@ -179,10 +178,7 @@ const closeCommentModal = () => {
           <button @click="">ბეჭდვა</button>
         </td>
         <td class="border border-gray-300 px-4 py-2">
-          <button @click="_status = 'გამოთხოვა';  openCommentModal()">გამოთხოვა</button>
-        </td>
-        <td class="border border-gray-300 px-4 py-2">
-          <button @click="_status = 'გაუქმება'; openCommentModal()">გაუქმება</button>
+          <button @click="_status = 'გამოთხოვა';  openCommentModal()">გამოთხოვა / გაუქმება</button>
         </td>
       </tr>
       </tbody>

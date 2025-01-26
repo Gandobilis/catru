@@ -58,6 +58,160 @@ export default function useUser() {
     const editable = ref(false);
     const notification = ref();
 
+    const getUser1 = async () => {
+        loading.value = true;
+        notification.value = undefined;
+        editable.value = undefined;
+        user.value = undefined;
+
+        if (personalOrTaxNumber.value) {
+            try {
+                // Mock response based on clientType and personalOrTaxNumber
+                const mockResponse = simulateBackendResponse(
+                    clientType.value,
+                    personalOrTaxNumber.value
+                );
+
+                const {customer, error} = mockResponse;
+
+                if (error) {
+                    throw error;
+                }
+
+                if (customer["Status"] === "Cancelled") {
+                    notification.value = "აღნიშნული ნომრით კლიენტი გაუქმებულია.";
+                    editable.value = true;
+                } else if (customer["Status"] === "Closed") {
+                    notification.value = "აღნიშნული ნომრით კლიენტი დახურულია.";
+                    editable.value = true;
+                } else {
+                    if (clientType.value === "IND") {
+                        user.value = {
+                            name: customer["Entity"]["Name"]["FirstName"],
+                            surname: customer["Entity"]["Name"]["LastName"],
+                            personalNumber: customer["Entity"]["PIN"],
+                            phoneNumber: customer["ContactInfo"]["SMSPhone"],
+                        };
+                    } else {
+                        user.value = {
+                            clientName: customer["Name"],
+                            taxNumber: customer["TaxDetails"]["TaxpayerId"],
+                            legPerson: undefined,
+                            legPersonTax: undefined,
+                            phoneNumber: undefined,
+                        };
+                    }
+                }
+            } catch (error) {
+                if (error.status === 404) {
+                    notification.value = "აღნიშნული ნომრით კლიენტი არ მოიძებნა.";
+                    editable.value = true;
+                } else {
+                    notification.value = "სერვერზე დაფიქსირდა შეცდომა.";
+                }
+            } finally {
+                loading.value = false;
+            }
+        } else {
+            loading.value = false;
+            notification.value = "ეს ველი სავალდებულოა.";
+        }
+    };
+
+// Mock function to simulate backend responses
+    const simulateBackendResponse = (clientType, identifier) => {
+        const mockData = {
+            IND: {
+                "12345678910": {
+                    customer: {
+                        Status: "Active",
+                        Entity: {
+                            Name: {
+                                FirstName: "John",
+                                LastName: "Doe",
+                            },
+                            PIN: "12345678910",
+                        },
+                        ContactInfo: {
+                            SMSPhone: "555123456",
+                        },
+                    },
+                },
+                "11111111111": {
+                    customer: {
+                        Status: "Cancelled",
+                        Entity: {
+                            Name: {
+                                FirstName: "Jane",
+                                LastName: "Smith",
+                            },
+                            PIN: "11111111111",
+                        },
+                        ContactInfo: {
+                            SMSPhone: "555567899",
+                        },
+                    },
+                },
+                "22222222222": {
+                    customer: {
+                        Status: "Closed",
+                        Entity: {
+                            Name: {
+                                FirstName: "Alice",
+                                LastName: "Johnson",
+                            },
+                            PIN: "22222222222",
+                        },
+                        ContactInfo: {
+                            SMSPhone: "555987654",
+                        },
+                    },
+                },
+            },
+            LEG: {
+                "987654321": {
+                    customer: {
+                        Status: "Active",
+                        Name: "Example Corp",
+                        TaxDetails: {
+                            TaxpayerId: "987654321",
+                        },
+                    },
+                },
+                "33333333333": {
+                    customer: {
+                        Status: "Cancelled",
+                        Name: "Cancelled Corp",
+                        TaxDetails: {
+                            TaxpayerId: "33333333333",
+                        },
+                    },
+                },
+                "44444444444": {
+                    customer: {
+                        Status: "Closed",
+                        Name: "Closed Corp",
+                        TaxDetails: {
+                            TaxpayerId: "44444444444",
+                        },
+                    },
+                },
+            },
+        };
+
+        // Simulate errors or return customer data
+        if (mockData[clientType] && mockData[clientType][identifier]) {
+            return mockData[clientType][identifier];
+        }
+
+        return {
+            error: {
+                status: 404,
+                message: "Customer not found",
+            },
+        };
+    };
+
 
     const getUser = async () => {
         loading.value = true;
@@ -121,9 +275,7 @@ export default function useUser() {
                             phoneNumber: undefined
                         }
                     }
-                    console.log(user.value)
                 }
-
             } catch (error) {
                 if (error.status === 404) {
                     notification.value = 'აღნიშნული ნომრით კლიენტი არ მოიძებნა.';
@@ -245,6 +397,8 @@ export default function useUser() {
                 AuthorizedName: "",
                 AuthorizedIDNumber: "",
                 TemplateCode: selectFormType.value,
+                AddressLegal:  'იურიდიული მისამართი', // შესაცვლელია
+                AddressActual: 'ფაქტობრივი მისამართი', // შესაცვლელია
             }
 
             if (clientType.value === 'IND') {
@@ -312,6 +466,8 @@ export default function useUser() {
                     AuthorizedIDNumber: "",
                     TemplateCode: selectFormType.value,
                     Name: _selectFormType.value,
+                    AddressLegal:  'იურიდიული მისამართი', // შესაცვლელია
+                    AddressActual: 'ფაქტობრივი მისამართი', // შესაცვლელია
                 };
             } else if (clientType.value === 'LEG') {
                 data = {
@@ -330,6 +486,8 @@ export default function useUser() {
                     AuthorizedIDNumber: user.value ? user.value.legPersonTax : _newUser.value.legPersonTax,
                     TemplateCode: selectFormTypeLeg.value,
                     Name: _selectFormTypeLeg.value,
+                    AddressLegal:  'იურიდიული მისამართი', // შესაცვლელია
+                    AddressActual: 'ფაქტობრივი მისამართი', // შესაცვლელია
                 };
             }
 
@@ -496,6 +654,7 @@ export default function useUser() {
         disabled,
         success,
         otpError,
-        smsError
+        smsError,
+        getUser1
     };
 }
