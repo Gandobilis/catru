@@ -58,161 +58,6 @@ export default function useUser() {
     const editable = ref(false);
     const notification = ref();
 
-    const getUser1 = async () => {
-        loading.value = true;
-        notification.value = undefined;
-        editable.value = undefined;
-        user.value = undefined;
-
-        if (personalOrTaxNumber.value) {
-            try {
-                // Mock response based on clientType and personalOrTaxNumber
-                const mockResponse = simulateBackendResponse(
-                    clientType.value,
-                    personalOrTaxNumber.value
-                );
-
-                const {customer, error} = mockResponse;
-
-                if (error) {
-                    throw error;
-                }
-
-                if (customer["Status"] === "Cancelled") {
-                    notification.value = "აღნიშნული ნომრით კლიენტი გაუქმებულია.";
-                    editable.value = true;
-                } else if (customer["Status"] === "Closed") {
-                    notification.value = "აღნიშნული ნომრით კლიენტი დახურულია.";
-                    editable.value = true;
-                } else {
-                    if (clientType.value === "IND") {
-                        user.value = {
-                            name: customer["Entity"]["Name"]["FirstName"],
-                            surname: customer["Entity"]["Name"]["LastName"],
-                            personalNumber: customer["Entity"]["PIN"],
-                            phoneNumber: customer["ContactInfo"]["SMSPhone"],
-                        };
-                    } else {
-                        user.value = {
-                            clientName: customer["Name"],
-                            taxNumber: customer["TaxDetails"]["TaxpayerId"],
-                            legPerson: undefined,
-                            legPersonTax: undefined,
-                            phoneNumber: undefined,
-                        };
-                    }
-                }
-            } catch (error) {
-                if (error.status === 404) {
-                    notification.value = "აღნიშნული ნომრით კლიენტი არ მოიძებნა.";
-                    editable.value = true;
-                } else {
-                    notification.value = "სერვერზე დაფიქსირდა შეცდომა.";
-                }
-            } finally {
-                loading.value = false;
-            }
-        } else {
-            loading.value = false;
-            notification.value = "ეს ველი სავალდებულოა.";
-        }
-    };
-
-// Mock function to simulate backend responses
-    const simulateBackendResponse = (clientType, identifier) => {
-        const mockData = {
-            IND: {
-                "12345678910": {
-                    customer: {
-                        Status: "Active",
-                        Entity: {
-                            Name: {
-                                FirstName: "John",
-                                LastName: "Doe",
-                            },
-                            PIN: "12345678910",
-                        },
-                        ContactInfo: {
-                            SMSPhone: "555123456",
-                        },
-                    },
-                },
-                "11111111111": {
-                    customer: {
-                        Status: "Cancelled",
-                        Entity: {
-                            Name: {
-                                FirstName: "Jane",
-                                LastName: "Smith",
-                            },
-                            PIN: "11111111111",
-                        },
-                        ContactInfo: {
-                            SMSPhone: "555567899",
-                        },
-                    },
-                },
-                "22222222222": {
-                    customer: {
-                        Status: "Closed",
-                        Entity: {
-                            Name: {
-                                FirstName: "Alice",
-                                LastName: "Johnson",
-                            },
-                            PIN: "22222222222",
-                        },
-                        ContactInfo: {
-                            SMSPhone: "555987654",
-                        },
-                    },
-                },
-            },
-            LEG: {
-                "987654321": {
-                    customer: {
-                        Status: "Active",
-                        Name: "Example Corp",
-                        TaxDetails: {
-                            TaxpayerId: "987654321",
-                        },
-                    },
-                },
-                "33333333333": {
-                    customer: {
-                        Status: "Cancelled",
-                        Name: "Cancelled Corp",
-                        TaxDetails: {
-                            TaxpayerId: "33333333333",
-                        },
-                    },
-                },
-                "44444444444": {
-                    customer: {
-                        Status: "Closed",
-                        Name: "Closed Corp",
-                        TaxDetails: {
-                            TaxpayerId: "44444444444",
-                        },
-                    },
-                },
-            },
-        };
-
-        // Simulate errors or return customer data
-        if (mockData[clientType] && mockData[clientType][identifier]) {
-            return mockData[clientType][identifier];
-        }
-
-        return {
-            error: {
-                status: 404,
-                message: "Customer not found",
-            },
-        };
-    };
-
-
     const getUser = async () => {
         loading.value = true;
         notification.value = undefined;
@@ -226,14 +71,15 @@ export default function useUser() {
                         <Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
                             <Header>
                                 <RequestHeaders xmlns="http://services.altasoft.ge/common/v1.0">
-                                    <ApplicationKey>[string]</ApplicationKey>
-                                    <RequestId>[string]</RequestId>
+                                    <ApplicationKey>ConsentsModule</ApplicationKey>
+                                    <RequestId>123</RequestId>
                                 </RequestHeaders>
                             </Header>
                             <Body>
                                 <ListCustomers xmlns="http://services.altasoft.ge/customers/v1.0">
+                                    <!-- Optional -->
                                     <Query>
-                                        <ControlFlags>Basic</ControlFlags>
+                                        <ControlFlags>Basic Extensions</ControlFlags>
                                         <Id>851375</Id>
                                         <${Tag}>${personalOrTaxNumber.value}</${Tag}>
                                     </Query>
@@ -241,7 +87,7 @@ export default function useUser() {
                             </Body>
                         </Envelope>
                     `;
-                const response = await axiosInstance.post('users', request_body, {
+                const response = await axios.post(import.meta.env.VITE_CUSTOMERS_SERVICE_URL, request_body, {
                     headers: {
                         'Content-Type': 'application/xml'
                     }
@@ -397,7 +243,7 @@ export default function useUser() {
                 AuthorizedName: "",
                 AuthorizedIDNumber: "",
                 TemplateCode: selectFormType.value,
-                AddressLegal:  'იურიდიული მისამართი', // შესაცვლელია
+                AddressLegal: 'იურიდიული მისამართი', // შესაცვლელია
                 AddressActual: 'ფაქტობრივი მისამართი', // შესაცვლელია
             }
 
@@ -466,7 +312,7 @@ export default function useUser() {
                     AuthorizedIDNumber: "",
                     TemplateCode: selectFormType.value,
                     Name: _selectFormType.value,
-                    AddressLegal:  'იურიდიული მისამართი', // შესაცვლელია
+                    AddressLegal: 'იურიდიული მისამართი', // შესაცვლელია
                     AddressActual: 'ფაქტობრივი მისამართი', // შესაცვლელია
                 };
             } else if (clientType.value === 'LEG') {
@@ -486,7 +332,7 @@ export default function useUser() {
                     AuthorizedIDNumber: user.value ? user.value.legPersonTax : _newUser.value.legPersonTax,
                     TemplateCode: selectFormTypeLeg.value,
                     Name: _selectFormTypeLeg.value,
-                    AddressLegal:  'იურიდიული მისამართი', // შესაცვლელია
+                    AddressLegal: 'იურიდიული მისამართი', // შესაცვლელია
                     AddressActual: 'ფაქტობრივი მისამართი', // შესაცვლელია
                 };
             }
@@ -655,6 +501,5 @@ export default function useUser() {
         success,
         otpError,
         smsError,
-        getUser1
     };
 }
