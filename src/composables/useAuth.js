@@ -21,10 +21,14 @@ export default function useAuth() {
         }
 
         try {
-            await axiosInstance.post(`login`, {
-                username: user.value.username,
-                password: user.value.password,
-            });
+            await axiosInstance.post(
+                `login`,
+                {
+                    username: user.value.username,
+                    password: user.value.password,
+                },
+            );
+
 
             await router.push("/");
         } catch (error) {

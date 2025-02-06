@@ -84,8 +84,7 @@ const {
             class="rounded-md pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli hover:bg-primary-button-hover hover:transition disabled:text-placeholder-grey disabled:bg-stroke-grey disabled:cursor-not-allowed"
             @click="getUser"
             :disabled="!personalOrTaxNumber"
-            v-if="!loading">შემოწმება
-        </button>
+            v-if="!loading">შემოწმება </button>
 
         <button v-else class="rounded-md pt-1 text-sm text-white bg-primary-blue w-[23%] font-mtavruli">
           <span class="loading loading-spinner loading-sm"/>
